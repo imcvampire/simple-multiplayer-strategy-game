@@ -31,3 +31,5 @@ class Castle:
         self.block_time = 60 * 5
         self.team_attacking = team_id
 
+        return True
+
