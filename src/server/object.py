@@ -16,3 +16,14 @@ class LauDai:
     def getQuestion(self):
         return self.idCauHoi
 
+class Item:
+	def __init__(self, name, point):
+		self.name = name
+		self.point = point
+
+class ItemAttack(Item):
+	pass
+
+class ItemDeffense(Item):
+	pass
+
