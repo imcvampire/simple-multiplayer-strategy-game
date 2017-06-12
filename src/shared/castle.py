@@ -3,10 +3,10 @@ import item
 class Castle:
     def __init__(self, id, question_id):
         self.id = id
-        self.owner_id = null
+        self.owner_id = None
         self.defence = 0
         self.is_blocked = false
-        self.team_attacking = null
+        self.team_attacking = None
         self.block_time = 0
         self.question_id = question_id
 
