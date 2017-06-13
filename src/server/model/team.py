@@ -78,3 +78,11 @@ class Team:
 
         return True
 
+    @staticmethod
+    def create_team_list(n_teams=4):
+        teams = []
+
+        for i in range(n_teams):
+            teams.append(Team(id, id))
+
+        return teams
