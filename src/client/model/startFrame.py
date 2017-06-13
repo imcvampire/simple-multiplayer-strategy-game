@@ -10,7 +10,7 @@ class startFrame():
         self.list_team = list_team
         self.master.title("Small-Game")
         self.master.geometry("430x170")
-
+        
         self.table_team = Frame(self.master)
         self.lable1 = Label(self.master, text = "Team Id:", relief= RIDGE, width = 10)
         self.teamId = Entry(self.master, width = 15)
