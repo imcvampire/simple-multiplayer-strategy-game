@@ -1,8 +1,13 @@
-from src.server.model.question import *
-from src.server.model.field import *
-from src.server.model.castle import *
-from src.server.model.team import *
-from src.server.model.item import *
+import os
+import path
+
+sys.path.append(os.path.abspath('../model'))
+
+from question import *
+from field import *
+from castle import *
+from team import *
+from item import *
 
 class controller:
     def __init__(self, file_name_question='question.csv'):
@@ -24,7 +29,7 @@ class controller:
             if i.id == team_id:
                 if i.add_member(player):
                     return True
-                else :
+                else:
                     return "max_players"
         return False
     def get_question_by_id(self, question_id): #0x0101
@@ -37,7 +42,7 @@ class controller:
         for i in self.fields:
             if i.id == mine_id:
                 return i.is_solved(self, resource, team_id):
-                    
+
     def get_question_mine(self,mine_id, resource, team_id): #0x0201
         for i in self.fields:
             if i.id == mine_id:
@@ -58,7 +63,7 @@ class controller:
                 else:
                     if team.is_enough(ITEM[type][itemname]['resources']):
                         return team.buy_item(type, itemname)
-                        
+
                     else:
                         return "not_enough_resource"
         return "not_found_team"
@@ -70,7 +75,7 @@ class controller:
                     if castle.id == castle_id:
                         if castle.is_blocked:
                             return "blocked"
-                        if castle.owner_id == None: 
+                        if castle.owner_id == None:
                             return "empty_castle"
                         else if team_id == castle.owner_id:
                             return "our_castle"
@@ -101,6 +106,6 @@ class controller:
 
 
 
-     
+
 
 
