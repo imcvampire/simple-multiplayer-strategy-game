@@ -60,4 +60,3 @@ class Castle:
             castles.append(Castle(i, randint(0, n_questions)))
 
         return castles
-
