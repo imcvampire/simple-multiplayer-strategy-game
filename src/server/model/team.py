@@ -1,3 +1,4 @@
+from threading import Lock
 from item import ITEM
 
 
@@ -13,6 +14,7 @@ class Team:
             "wood": 0,
         }
         self.inventory = []
+        self.lock = Lock()
 
     def add_member(self, member):
         if len(self.members) >= 4:
@@ -23,24 +25,25 @@ class Team:
         return True
 
     def add_resource(self, type, amount):
-        self.resources[type] += amount
+        with self.lock:
+            self.resources[type] += amount
 
-    def reduce_resource(self, type, amount):
-        if self.resources[type] < amount:
-            return False
+    def __reduce_resource(self, type, amount):
+        if self.resources[type] >= amount:
+            self.resources[type] -= amount
 
-        self.resources[type] -= amount
+            return True
 
-        return True
+        return False
 
-    def add_item(self, item_name):
+    def __add_item(self, item_name):
         if item_name not in self.inventory:
             self.inventory.append(item_name)
             return True
 
         return False
 
-    def is_enough(self, price):
+    def __is_enough(self, price):
         types = price.keys()
 
         is_enough = True
@@ -52,6 +55,7 @@ class Team:
         return is_enough
 
     def is_have(self, item_name):
+        # Thread safe
         return item_name in self.inventory
 
     def buy_item(self, type, item_name):
@@ -62,19 +66,27 @@ class Team:
 
         resource_types = price.keys()
 
-        if not self.is_enough(price):
-            return False
+        result = False
 
-        for type, amount in price.items():
-            self.reduce_resource(type, amount)
+        with self.lock:
+            if not self.__is_enough(price):
+                return False
 
-        return self.add_item(item_name)
+            for type, amount in price.items():
+                self.__reduce_resource(type, amount)
+
+            result = self.__add_item(item_name)
+
+        return result
 
     def use_item(self, item_name):
-        if not item_name in self.inventory:
-            return False
+        result = False
 
-        self.inventory.remove(item_name)
+        with self.lock:
+            if item_name in self.inventory:
+                self.inventory.remove(item_name)
 
-        return True
+                result = True
+
+        return result
 

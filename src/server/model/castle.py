@@ -1,3 +1,4 @@
+from threading import Lock
 from item import ITEM
 
 
@@ -11,40 +12,64 @@ class Castle:
         self.block_time = 0
         self.question_id = question_id
         self.gold_delay = 0
+        self.lock = Lock()
 
     def change_def(self, item_name):
-        if item_name not in list(ITEM['defence'].keys()):
-            return False
+        result = None
 
-        self.defence = ITEM['defence'][item_name]
-        return True
+        with self.lock:
+            if item_name not in list(ITEM['defence'].keys()):
+                result = False
+            else:
+                self.defence = ITEM['defence'][item_name]
+                result = True
+
+        return result
 
     def is_attack_success(self, item_name):
-        if item_name not in list(ITEM['attack'].keys()):
-            return False
+        result = None
 
-        return self.defence <= ITEM['attack'][item_name]['value']
+        with self.lock:
+            if item_name not in list(ITEM['attack'].keys()):
+                result = False
+            else:
+                result = self.defence <= ITEM['attack'][item_name]['value']
+
+        return result
 
     def attacked(self, team_id):
-        if self.is_blocked:
-            return False
+        result = None
 
-        self.is_blocked = True
-        self.block_time = 60 * 5
-        self.team_attacking = team_id
+        with self.lock:
+            if self.is_blocked:
+                result = False
+            else:
+                self.is_blocked = True
+                self.block_time = 60 * 5
+                self.team_attacking = team_id
 
-        return True
+                result = True
+
+        return result
 
     def change_owner(self, team_id):
-        if self.owner_id == team_id:
-            return False
+        result = None
 
-        self.owner_id = team_id
-        self.gold_delay = 30
+        with self.lock:
+            if self.owner_id == team_id:
+                result = False
+            else:
+                self.owner_id = team_id
+                self.gold_delay = 30
+
+                result = True
+
+        return result
 
     def reduce_gold_delay(self):
-        self.gold_delay -= 1
+        with self.lock:
+            self.gold_delay -= 1
 
-        if self.gold_delay == 0:
-            self.gold_delay = 30
+            if self.gold_delay == 0:
+                self.gold_delay = 30
 

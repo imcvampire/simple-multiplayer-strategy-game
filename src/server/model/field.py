@@ -1,3 +1,6 @@
+from threading import Lock
+
+
 class Field:
     def __init__(self, id, questions):
         self.id = id
@@ -17,17 +20,21 @@ class Field:
                 "question": questions[2],
             },
         }
+        self.lock = Lock()
 
     def get_question_id(self, resource):
         return self.resources[resource]['question']
 
     def add_solver(self, resource, team_id):
-        if team_id in self.resources[resource]['solvers']:
-            return False
+        result = False
 
-        self.resources[resource]['solvers'].append(team_id)
+        with self.lock:
+            if not (team_id in self.resources[resource]['solvers']):
+                self.resources[resource]['solvers'].append(team_id)
 
-        return True
+                result = True
+
+        return result
 
     def is_solved(self, resource, team_id):
         return team_id in self.resources[resource]['solvers']
