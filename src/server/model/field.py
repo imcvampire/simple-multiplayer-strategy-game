@@ -1,25 +1,25 @@
 class Field:
-    def __init__(self, id, questions):
+    def __init__(self, id, questionid1, questionid2, questionid3):
         self.id = id
         self.resources = {
             "iron": {
                 "solvers": [],
-                "question": questions[0],
+                "question": questionid1,
             },
 
             "stone": {
                 "solvers": [],
-                "question": questions[1],
+                "question": questionid2,
             },
 
             "wood": {
                 "solvers": [],
-                "question": questions[2],
+                "question": questionid3,
             },
         }
 
-    def get_question(self, resource):
-        return self.resources[resource]['question'].get_question()
+    def get_question_id(self, resource):
+        return self.resources[resource]['question']
 
     def add_solver(self, resource, team_id):
         if team_id in self.resources[resource]['solvers']:
