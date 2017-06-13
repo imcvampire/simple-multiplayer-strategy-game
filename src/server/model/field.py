@@ -1,23 +1,24 @@
 from threading import Lock
+from random import randint
 
 
 class Field:
-    def __init__(self, id, questions):
+    def __init__(self, id, questionid1, questionid2, questionid3):
         self.id = id
         self.resources = {
             "iron": {
                 "solvers": [],
-                "question": questions[0],
+                "question": questionid1,
             },
 
             "stone": {
                 "solvers": [],
-                "question": questions[1],
+                "question": questionid2,
             },
 
             "wood": {
                 "solvers": [],
-                "question": questions[2],
+                "question": questionid3,
             },
         }
         self.lock = Lock()
@@ -38,4 +39,13 @@ class Field:
 
     def is_solved(self, resource, team_id):
         return team_id in self.resources[resource]['solvers']
+
+    @staticmethod
+    def create_field_list(n_fields=3, n_questions):
+        fields = []
+
+        for field_index in range(n_fields):
+            fields.append(Field(field_index, randint(0, n_questions)))
+
+        return fields
 

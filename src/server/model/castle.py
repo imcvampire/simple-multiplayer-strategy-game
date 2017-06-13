@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 from threading import Lock
+=======
+from random import randint
+>>>>>>> 56d0389ca251ca552a84bd33e70eff57a8c35f98
 from item import ITEM
 
 
@@ -25,6 +29,9 @@ class Castle:
                 result = True
 
         return result
+
+    def change_question(self, question_id):
+        self.question_id = question_id
 
     def is_attack_success(self, item_name):
         result = None
@@ -72,4 +79,13 @@ class Castle:
 
             if self.gold_delay == 0:
                 self.gold_delay = 30
+
+    @staticmethod
+    def create_castle_list(n_castles=3, n_questions):
+        castles = []
+
+        for i in range(n_castles):
+            castles.append(Castle(i, randint(0, n_questions)))
+
+        return castles
 
