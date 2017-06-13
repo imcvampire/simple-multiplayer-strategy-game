@@ -19,16 +19,16 @@ class Field:
         }
 
     def get_question(self, resource):
-        return self.resources[resource].question.get_question()
+        return self.resources[resource]['question'].get_question()
 
     def add_solver(self, resource, team_id):
-        if team_id in self.resources[resource].solvers:
+        if team_id in self.resources[resource]['solvers']:
             return False
 
-        self.resources[resource].solvers.append(team_id)
+        self.resources[resource]['solvers'].append(team_id)
 
         return True
 
     def is_solved(self, resource, team_id):
-        return team_id in self.resources[resource].solvers
+        return team_id in self.resources[resource]['solvers']
 
