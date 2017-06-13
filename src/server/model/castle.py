@@ -23,7 +23,7 @@ class Castle:
         if item_name not in list(ITEM['attack'].keys()):
             return False
 
-        return self.defence <= ITEM['attack'][item_name].value
+        return self.defence <= ITEM['attack'][item_name]['value']
 
     def attacked(self, team_id):
         if self.is_blocked:
