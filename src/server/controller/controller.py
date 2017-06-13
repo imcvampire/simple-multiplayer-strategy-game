@@ -33,14 +33,15 @@ class controller:
                 return i.get_question()
         return None
 
-    def send_question_mine(self,mine_id, resource, team_id): #0x0201
+    def check_question_mine(self,mine_id, resource, team_id): #0x0201
         for i in self.fields:
             if i.id == mine_id:
-                if i.is_solved(self, resource, team_id):
-                    return "team_solved"
-                else :
-                    return i.get_question()
-
+                return i.is_solved(self, resource, team_id):
+                    
+    def get_question_mine(self,mine_id, resource, team_id): #0x0201
+        for i in self.fields:
+            if i.id == mine_id:
+                return i.get_question_id(resource)
     def check_answer(self, answer, question_id): #0x0301
         for i in self.questions:
             if i.id == question_id:
