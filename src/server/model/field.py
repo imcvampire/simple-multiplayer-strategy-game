@@ -1,3 +1,6 @@
+from random import randint
+
+
 class Field:
     def __init__(self, id, questions):
         self.id = id
@@ -31,4 +34,13 @@ class Field:
 
     def is_solved(self, resource, team_id):
         return team_id in self.resources[resource]['solvers']
+
+    @staticmethod
+    def create_field_list(n_fields=3, n_questions):
+        fields = []
+
+        for field_index in range(n_fields):
+            fields.append(Field(field_index, randint(0, n_questions)))
+
+        return fields
 
