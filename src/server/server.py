@@ -1,36 +1,38 @@
 import socket
 import select
-from someobj import message, Team
-import _pickle as pickle
+from model.message import message
+from _pickle import loads, dumps
 import sys
+
+
 def process_mess(client, mes):
-    if (mes.opcode == 0x0101):
+    if (mes.opCode == 0x0101):
+        print (mes.teamId)
+    elif (mes.opCode == 0x0201):
         pass
-    elif (mes.opcode == 0x0201):
+    elif (mes.opCode == 0x0301):
         pass
-    elif (mes.opcode == 0x0301):
+    elif (mes.opCode == 0x0401):
         pass
-    elif (mes.opcode == 0x0401):
+    elif (mes.opCode == 0x0501):
         pass
-    elif (mes.opcode == 0x0501):
+    elif (mes.opCode == 0x0601):
         pass
-    elif (mes.opcode == 0x0601):
+    elif (mes.opCode == 0x0701):
         pass
-    elif (mes.opcode == 0x0701):
-        pass
-    elif (mes.opcode == 0x0801):
+    elif (mes.opCode == 0x0801):
         pass
     else:
         pass
 
 list_team = []
 for i in range(3):
-    list_team.append(Team(i+1, 0, 0, 0, 0))
+    list_team.append([i+1, 0, 0, 0, 0])
 
 def main():
     try:        
         host = sys.argv[1]
-        port_request = int(sys.argv[2])
+        port = int(sys.argv[2])
     except:
         print ("Error argv!")
         exit()
@@ -54,12 +56,12 @@ def main():
                         connection.setblocking(0)
                         epoll.register(connection.fileno(), select.EPOLLIN)
                         connections[connection.fileno()] = connection
-                        connection.send(pickle.dumps(message(0x0902,None,list_team)))
+                        connection.send(dumps(message(0x0802,None,list_team)))
                     except:
                         pass
                 elif event & select.EPOLLIN:
                     try:
-                        mes = pickle.loads(connections[fileno].recv(2048))
+                        mes = loads(connections[fileno].recv(2048))
                         process_mess(connections[fileno], mes)
                         epoll.modify(fileno, select.EPOLLIN)
                     except:

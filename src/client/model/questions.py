@@ -1,7 +1,10 @@
+import _pickle as pickle
+
 
 class QuestionFrame:
-    def __init__ (self, client, master, parent, content, choices):
+    def __init__ (self, client, teamId, master, parent, content, choices):
         self.client =  client
+        self.teamId = teamId
         self.master = master
         self.parent = parent
         self.content = content
