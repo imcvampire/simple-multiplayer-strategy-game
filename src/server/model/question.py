@@ -23,7 +23,7 @@ class Question:
     def get_questions(file_name='questions.csv'):
         questions = []
 
-        with open(file_name, newline='') as csvfile:
+        with open(file_name) as csvfile:
             csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
 
             for index, row in enumerate(csvreader):
@@ -37,5 +37,9 @@ class Question:
 
         return questions
 
-
+ques = Question.get_questions("question.csv")
+for i in ques:
+    print i.id,i.content
+    print i.choices
+    print i.answer
 
