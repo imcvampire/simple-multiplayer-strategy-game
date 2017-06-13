@@ -18,7 +18,7 @@ class Field:
             },
         }
 
-    def get_question(self, resource):
+    def get_question_id(self, resource):
         return self.resources[resource].question.get_question()
 
     def add_solver(self, resource, team_id):
