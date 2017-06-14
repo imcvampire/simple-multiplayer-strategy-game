@@ -1,5 +1,5 @@
 from item import ITEM
-
+import csv 
 
 class Team:
     def __init__(self, id, name):
@@ -78,11 +78,15 @@ class Team:
 
         return True
 
+    
     @staticmethod
-    def create_team_list(n_teams=4):
+    def get_teams_from_file(file_name='teams.csv'):
         teams = []
 
-        for i in range(n_teams):
-            teams.append(Team(id, id))
+        with open(file_name) as csvfile:
+            csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
+
+            for index, row in enumerate(csvreader):
+                teams.append(Team(row[0], row[1]))
 
         return teams

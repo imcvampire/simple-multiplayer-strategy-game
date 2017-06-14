@@ -1,5 +1,6 @@
 from random import randint
 from item import ITEM
+import csv
 
 
 class Castle:
@@ -53,10 +54,13 @@ class Castle:
             self.gold_delay = 30
 
     @staticmethod
-    def create_castle_list(n_castles=3, n_questions):
+    def get_castles_from_file(file_name='castles.csv'):
         castles = []
 
-        for i in range(n_castles):
-            castles.append(Castle(i, randint(0, n_questions)))
+        with open(file_name) as csvfile:
+            csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
+
+            for index, row in enumerate(csvreader):
+                castles.append(Castle(row[0], randint(int(row[1]), int(row[2]))))
 
         return castles

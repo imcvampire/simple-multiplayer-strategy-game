@@ -12,18 +12,10 @@ from item import *
 class controller:
     def __init__(self, file_name_question='question.csv'):
         self.questions = Question.get_questions(file_name_question)
-        self.teams = []
-        self.teams.append(Team('team1', "Red"))
-        self.teams.append(Team('team2', "Yealow"))
-        self.teams.append(Team('team3', "Blue"))
-        self.castles = []
-        self.castles.append(Castle(1,1))
-        self.castles.append(Castle(2,2))
-        self.castles.append(Castle(3,3))
-        self.fields = []
-        self.fields.append(Field(1,4,5,6))
-        self.fields.append(Field(2,7,8,9))
-        self.fields.append(Field(3,10,11,12))
+        self.teams = Team.get_teams_from_file()
+        
+        self.castles = Castle.get_castles_from_file()
+        self.fields = Field.get_fields_from_file()
     def join_team(self, player, team_id):
         for i in self.teams:
             if i.id == team_id:
@@ -105,7 +97,7 @@ class controller:
 
 
 
-
+# q = controller()
 
 
 
