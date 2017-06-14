@@ -1,5 +1,5 @@
-import os
-import path
+import os, sys
+# import path
 
 sys.path.append(os.path.abspath('../model'))
 
@@ -41,7 +41,7 @@ class controller:
     def check_question_mine(self,mine_id, resource, team_id): #0x0201
         for i in self.fields:
             if i.id == mine_id:
-                return i.is_solved(self, resource, team_id):
+                return i.is_solved(self, resource, team_id)
 
     def get_question_mine(self,mine_id, resource, team_id): #0x0201
         for i in self.fields:
@@ -77,7 +77,7 @@ class controller:
                             return "blocked"
                         if castle.owner_id == None:
                             return "empty_castle"
-                        else if team_id == castle.owner_id:
+                        elif team_id == castle.owner_id:
                             return "our_castle"
                         else :
                             return "attack"
