@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 from threading import Lock
-=======
 from random import randint
->>>>>>> 56d0389ca251ca552a84bd33e70eff57a8c35f98
 from item import ITEM
 
 
@@ -74,11 +71,16 @@ class Castle:
         return result
 
     def reduce_gold_delay(self):
+        is_have_resource = False
+
         with self.lock:
             self.gold_delay -= 1
 
-            if self.gold_delay == 0:
+            if self.gold_delay == -1:
                 self.gold_delay = 30
+                is_have_resource = True
+
+        return True
 
     @staticmethod
     def create_castle_list(n_castles=3, n_questions):
