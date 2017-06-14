@@ -1,8 +1,8 @@
 from random import randint
-
+import csv
 
 class Field:
-    def __init__(self, id, questions):
+    def __init__(self, id, questionid1, questionid2, questionid3):
         self.id = id
         self.resources = {
             "iron": {
@@ -35,10 +35,16 @@ class Field:
         return team_id in self.resources[resource]['solvers']
 
     @staticmethod
-    def create_field_list(n_fields=3, n_questions):
+    def get_fields_from_file(file_name='fields.csv'):
         fields = []
 
-        for field_index in range(n_fields):
-            fields.append(Field(field_index, randint(0, n_questions)))
+        with open(file_name) as csvfile:
+            csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
+
+            for index, row in enumerate(csvreader):
+                fields.append(Field(row[0],
+                                          row[1],
+                                          row[2],
+                                          row[3]))
 
         return fields
