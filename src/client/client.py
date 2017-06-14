@@ -12,13 +12,14 @@ def main():
     client = socket.socket()
     client.settimeout(2.0)
     client.connect((host, port))
-    mes = loads(client.recv(2048))
-    if mes.opCode == 0x0802:
-        list_team = mes.payLoad
+    mesrcv = loads(client.recv(2048))
+    if mesrcv.opCode == 0x0802:
+        list_team = mesrcv.payLoad
         frame = startFrame(client, root, list_team)
         frame.mainLoop()
     else:
-        client.close()
+        pass
+    client.close() 
 
 if __name__ == '__main__':
     main()

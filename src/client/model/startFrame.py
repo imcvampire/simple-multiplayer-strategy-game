@@ -1,7 +1,8 @@
 from tkinter import *
 from _pickle import loads, dumps
 from model.message import message
-
+from model.mainPlay import mainPlay
+from tkinter import messagebox
 class startFrame():
 
     def __init__(self, client, master, list_team):
@@ -53,8 +54,20 @@ class startFrame():
 
     def playGame(self, teamId):
         mes = message(0x0101, teamId, None)
-        self.client.send(dumps(mes))
-
+        try:
+            self.client.send(dumps(mes))
+            mesrcv = loads(self.client.recv(2048))
+            if mesrcv.opCode == 0x0102:
+                if mesrcv.teamId == True:
+                    newFrame = Toplevel()
+                    self.hide()
+                    mainGame = mainPlay(self.client, teamId, newFrame, self.master)
+                else:
+                    messagebox.showwarning("Warning", mesrcv.payLoad)
+            else:
+                messagebox.showwarning("Warning", "Server send Error! Please try again!")
+        except:
+            messagebox.showwarning("Warning", "Cannot connect to server!")
 
     def quit(self):
         self.master.destroy()

@@ -6,20 +6,50 @@ import sys
 
 
 def process_mess(client, mes):
-    if (mes.opCode == 0x0101):
+    if (mes.opCode == 0x0101): ## client join team ##
         print (mes.teamId)
-    elif (mes.opCode == 0x0201):
-        pass
-    elif (mes.opCode == 0x0301):
-        pass
-    elif (mes.opCode == 0x0401):
-        pass
-    elif (mes.opCode == 0x0501):
-        pass
-    elif (mes.opCode == 0x0601):
-        pass
+        messend = message(0x0102, True, None)
+        client.send(dumps(messend))
+    elif (mes.opCode == 0x0201): ## client want question of mine ##
+        Id, resource = mes.payLoad
+        print ("Mine Id:", Id)
+        print ("Resuorce:", resource)
+        content = "Cau Hoi ABCD"
+        choice = ["A", "B", "C", "D"]
+        payload = content, choice
+        messend = message(0x0202, True, payload)
+        client.send(dumps(messend))
+    elif (mes.opCode == 0x0301): ## client send answer of mine's question ##
+        Id, resource, answer = mes.payLoad
+        print ("Mine Id:", Id)
+        print ("Resuorce:", resource)
+        print ("Answer:", answer)
+        messend = message(0x0302, True, None)
+        client.send(dumps(messend))
+    elif (mes.opCode == 0x0401): ## client buy attack ##
+        print ("Team Id:", mes.teamId)
+        print ("Attack:",mes.payLoad)
+        messend = message(0x0402, False, "Not enough resource!")
+        client.send(dumps(messend))
+    elif (mes.opCode == 0x0501): ## client attack castle ##
+        print ("Team Id:", mes.teamId)
+        print ("Castle Id:", mes.payLoad)
+        payload = "Cau Hoi Lau Dai", ["A","B","C","D"]
+        messend = message(0x0502, True, payload)
+        client.send(dumps(messend))
+    elif (mes.opCode == 0x0601): ## client buy defend ##
+        print ("Team Id:", mes.teamId)
+        castleId , name = mes.payLoad
+        print ("Castle Id:", castleId)
+        print ("Name of Defend:", name)
+        messend = message(0x0602, False, "Not enough resuorce")
+        client.send(dumps(messend))
     elif (mes.opCode == 0x0701):
-        pass
+        Id, resource, answer = mes.payLoad
+        print ("Castle Id:", Id)
+        print ("Answer:", answer)
+        messend = message(0x0702, False, None)
+        client.send(dumps(messend))
     elif (mes.opCode == 0x0801):
         pass
     else:
