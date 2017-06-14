@@ -3,7 +3,7 @@ from random import randint
 
 
 class Field:
-    def __init__(self, id, questionid1, questionid2, questionid3):
+    def __init__(self, id, questions):
         self.id = id
         self.resources = {
             "iron": {
@@ -48,4 +48,3 @@ class Field:
             fields.append(Field(field_index, randint(0, n_questions)))
 
         return fields
-
