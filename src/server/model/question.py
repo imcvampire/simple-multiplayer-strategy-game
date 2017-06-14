@@ -37,9 +37,9 @@ class Question:
 
         return questions
 
-ques = Question.get_questions("question.csv")
-for i in ques:
-    print i.id,i.content
-    print i.choices
-    print i.answer
+# ques = Question.get_questions("question.csv")
+# for i in ques:
+#     print i.id,i.content
+#     print i.choices
+#     print i.answer
 
