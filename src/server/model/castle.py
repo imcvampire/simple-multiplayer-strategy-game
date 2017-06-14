@@ -53,7 +53,7 @@ class Castle:
             self.gold_delay = 30
 
     @staticmethod
-    def create_castle_list(n_castles=3, n_questions):
+    def create_castle_list(n_questions, n_castles=3):
         castles = []
 
         for i in range(n_castles):
