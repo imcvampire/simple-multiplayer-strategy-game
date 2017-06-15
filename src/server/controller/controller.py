@@ -32,7 +32,7 @@ class controller:
     def check_question_mine(self,mine_id, resource, team_id): #0x0201
         for i in self.fields:
             if i.id == mine_id:
-                return i.is_solved(self, resource, team_id)
+                return i.is_solved(resource, team_id)
 
     def get_questionid_mine(self,mine_id, resource): #0x0201
         for i in self.fields:
@@ -91,7 +91,7 @@ class controller:
         else:
             print("else")
             quesId = self.get_questionid_mine(mine_id, resource)
-            if self.check_answer(self, answer, quesId):
+            if self.check_answer(answer, quesId):
                 print("for")
                 for i in self.fields:
                     if i.id == mine_id:
@@ -181,3 +181,7 @@ control.buy_item(1,'balista', 'attack')
 control.buy_item(1,'stone', 'defence')
 print control.get_team_resources()
 print control.buy_item(2,'stone', 'defence')
+print control.get_question_by_id(control.get_questionid_mine(1,"stone"))
+print control.check_answer_mine(1,"stone", 2, '2')
+# print control.get_question_by_id(18)
+# print control.check_answer('2',18)
