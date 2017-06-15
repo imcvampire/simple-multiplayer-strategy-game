@@ -12,7 +12,7 @@ class Team:
             "stone": 0,
             "wood": 0,
         }
-        self.inventory = []
+        self.inventory = [None, None]
 
     def add_member(self, member):
         if len(self.members) >= 4:
@@ -64,13 +64,16 @@ class Team:
 
         for type, amount in price.items():
             self.reduce_resource(type, amount)
-        if type == 'attack':
+        # print "reduce resource"
+        if item_name in ITEM['attack'].keys():
+            # print "atk"
             try:      
                 self.inventory[0] = item_name
                 return True
             except:
                 return "ERROR_append_item"
-        elif type == 'defence':
+        else:
+            # print "def"
             try:      
                 self.inventory[1] = item_name
                 return True
@@ -84,13 +87,7 @@ class Team:
         self.inventory.remove(item_name)
 
         return True
-    def use_item(self, item_name):
-        if not item_name in self.inventory:
-            return False
-
-        self.inventory.remove(item_name)
-
-        return True
+   
 
     
     @staticmethod

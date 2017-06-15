@@ -163,8 +163,21 @@ class controller:
     def get_team_resources(self):
         team_resources = []
         for i in self.teams:
-            team_resources.append((i.id, i.resources["gold"], i.resources["iron"], i.resources["wood"], i.resources["stone"]))        
+            team_resources.append((i.id, i.resources["gold"], i.resources["iron"], i.resources["wood"], i.resources["stone"], i.inventory))        
         return team_resources
 
+    def add_resource(self, team_id):
+        for team in self.teams:
+            if team.id == team_id:
+                team.add_resource("gold", 10000)
+                team.add_resource("iron", 10000)
+                team.add_resource("stone", 10000)
+                team.add_resource("wood", 10000)
 
 control = controller()
+control.add_resource(1)
+print control.get_team_resources()
+control.buy_item(1,'balista', 'attack')
+control.buy_item(1,'stone', 'defence')
+print control.get_team_resources()
+print control.buy_item(2,'stone', 'defence')
