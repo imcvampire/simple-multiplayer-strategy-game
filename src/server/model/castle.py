@@ -3,7 +3,6 @@ from random import randint
 from item import ITEM
 import csv
 
-
 class Castle:
     def __init__(self, id, question_id):
         self.id = id
@@ -86,11 +85,8 @@ class Castle:
     @staticmethod
     def get_castles_from_file(file_name='castles.csv'):
         castles = []
-
         with open(file_name) as csvfile:
             csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
-
             for index, row in enumerate(csvreader):
                 castles.append(Castle(row[0], randint(int(row[1]), int(row[2]))))
-
         return castles

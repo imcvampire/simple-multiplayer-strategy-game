@@ -1,6 +1,6 @@
 from tkinter import *
 from _pickle import loads, dumps
-from model.message import message
+from message import message
 from model.mainPlay import mainPlay
 from tkinter import messagebox
 class startFrame():
@@ -53,6 +53,10 @@ class startFrame():
             l.grid(row=i+1, column=4, sticky=NSEW)
 
     def playGame(self, teamId):
+        try:
+            teamId = int(teamId)
+        except:
+            teamId = 0
         mes = message(0x0101, teamId, None)
         try:
             self.client.send(dumps(mes))

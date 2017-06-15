@@ -68,15 +68,12 @@ class Field:
 
     @staticmethod
     def get_fields_from_file(file_name='fields.csv'):
-        fields = []
-
+        fields = [] 
         with open(file_name) as csvfile:
             csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
-
             for index, row in enumerate(csvreader):
-                fields.append(Field(row[0],
-                                          row[1],
-                                          row[2],
-                                          row[3]))
-
+                fields.append(Field(int(row[0]),
+                                          int(row[1]),
+                                          int(row[2]),
+                                          int(row[3])))
         return fields

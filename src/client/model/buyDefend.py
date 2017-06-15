@@ -1,6 +1,6 @@
 from tkinter import *
 from _pickle import loads, dumps
-from model.message import message
+from message import message
 from tkinter import messagebox
 
 class buyDefend(object):
@@ -51,11 +51,10 @@ class buyDefend(object):
         self.castleId = castleId
         self.checked = StringVar()
         self.choices = [
-            (ITEM['defence']['fence'],1),
-            (ITEM['defence']['wood'],2),
-            (ITEM['defence']['stone'],3),
-            (ITEM['defence']['legend'],4),
-
+            (ITEM['defence']['fence'],"fence"),
+            (ITEM['defence']['wood'],"wood"),
+            (ITEM['defence']['stone'],"stone"),
+            (ITEM['defence']['legend'],"legend"),
         ]
         Label(self.master, text = "Sellect Item: ", justify = LEFT,padx=20).pack()
         for txt, val in self.choices:

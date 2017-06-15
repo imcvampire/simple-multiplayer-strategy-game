@@ -24,9 +24,7 @@ class Team:
         """
         if len(self.members) >= 4:
             return False
-
         self.members.append(member)
-
         return True
 
     def add_resource(self, resource_type, amount):
@@ -55,7 +53,6 @@ class Team:
         if item_name not in self.inventory:
             self.inventory.append(item_name)
             return True
-
         return False
 
     def __is_enough(self, price):
@@ -93,16 +90,23 @@ class Team:
         result = False
 
         with self.lock:
-            if not self.__is_enough(price):
-                return False
-
-            for i_type, amount in price.items():
-                self.__reduce_resource(i_type, amount)
-
-            result = self.__add_item(item_name)
-
+           for type, amount in price.items():
+               self.__reduce_resource(type, amount)
+           if type == 'attack':
+               try:      
+                   self.inventory[0] = item_name
+                   result = True
+               except:
+                   result = "ERROR_append_item"
+           elif type == 'defence':
+               try:      
+                   self.inventory[1] = item_name
+                   result =  True
+               except:
+                   result = "ERROR_append_item"
+                
         return result
-
+      
     def use_item(self, item_name):
         """Use a item
         :param item_name: item's name
@@ -130,6 +134,6 @@ class Team:
             csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
 
             for index, row in enumerate(csvreader):
-                teams.append(Team(row[0], row[1]))
+                teams.append(Team(int(row[0]), row[1]))
 
         return teams

@@ -1,6 +1,6 @@
 from tkinter import *
 from _pickle import loads, dumps
-from model.message import message
+from message import message
 from model.table import table
 from model.minning import minning
 from model.questions import questions
