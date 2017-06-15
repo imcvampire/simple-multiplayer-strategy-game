@@ -84,16 +84,22 @@ class controller:
 
     ### 0x0301 ###
     def check_answer_mine(self, mine_id, resource, team_id, answer):
+        print("check")
         if self.check_question_mine(mine_id, resource, team_id):
-            return "is_sloved"
+            print("check1")
+            return "is_solved"
         else:
+            print("else")
             quesId = self.get_questionid_mine(mine_id, resource)
             if self.check_answer(self, answer, quesId):
+                print("for")
                 for i in self.fields:
                     if i.id == mine_id:
-                        i.add_slover(resource, team_id)
+                        i.add_solver(resource, team_id)
+                print("true")
                 return True
             else:
+                print("false")
                 return False
 
     def check_castle(self, team_id, castle_id): #0x0501

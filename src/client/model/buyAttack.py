@@ -44,7 +44,6 @@ class buyAttack(object):
             (ITEM['attack']['balista'],"balista"),
             (ITEM['attack']['catapult'],"catapult"),
             (ITEM['attack']['cannon'],"cannon"),
-
         ]
         Label(self.master, text = "Sellect Item: ", justify = LEFT,padx=20).pack()
         for txt, val in self.choices:
