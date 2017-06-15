@@ -41,7 +41,7 @@ class Field:
         return result
 
     def is_solved(self, resource, team_id):
-        return len(list(filter(lambda: x: x['team_id'] == team_id,
+        return len(list(filter(lambda x: x['team_id'] == team_id,
                                self.resources[resource]['solvers']))) == 1
 
     def get_solvers(self, resource):
@@ -68,7 +68,7 @@ class Field:
 
     @staticmethod
     def get_fields_from_file(file_name='fields.csv'):
-        fields = [] 
+        fields = []
         with open(file_name) as csvfile:
             csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
             for index, row in enumerate(csvreader):
