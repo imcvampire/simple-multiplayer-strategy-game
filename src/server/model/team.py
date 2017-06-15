@@ -67,9 +67,19 @@ class Team:
 
         for type, amount in price.items():
             self.reduce_resource(type, amount)
-
-        return self.add_item(item_name)
-
+        if type == 'attack':
+            try:      
+                self.inventory[0] = item_name
+                return True
+            except:
+                return "ERROR_append_item"
+        elif type == 'defence':
+            try:      
+                self.inventory[1] = item_name
+                return True
+            except:
+                return "ERROR_append_item"
+ 
     def use_item(self, item_name):
         if not item_name in self.inventory:
             return False

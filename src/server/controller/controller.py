@@ -116,7 +116,8 @@ class controller:
             if i.id == team_id:
                 return weapon in i.inventory and weapon in ITEM['attack'].keys()
         return "not_found_team"
-    def attack_castle(self, team_id, castle_id, item_attack):
+
+    def attack_castle(self, team_id, castle_idgi, item_attack):
         for team in self.teams:
             if team.id == team_id:
                 for castle in self.castles:
@@ -132,13 +133,22 @@ class controller:
         return "not_found_castle"
         
         
+    def answer_castles_success(self, team_id, castle_id):
+        for team in self.teams:
+            if team.id == team_id:
+                for castle in self.castles:
+                    if castle.id == castle_id: 
+                        castle.owner_id = team_id
+                        castle.block_time = 60
+                        castle.is_blocked = True
+
+                return "not_found_castle"
+        return "not_found_castle"
 
 
-
-
-# q = controller()
-# print q.join_team("Khanh", 1)
-# print q.check_answer(2,3)
-# print q.questions[23].get_question()
-# print q.get_question_by_id(12)
-print ITEM['attack'].keys()
+    def get_team_resources(self):
+        team_resources = []
+        for i in self.teams:
+            team_resources.append((i.id, i.resources, i.inventory))
+        
+        return team_resources
