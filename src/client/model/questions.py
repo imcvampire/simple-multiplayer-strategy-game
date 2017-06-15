@@ -1,6 +1,6 @@
 from tkinter import *
 from _pickle import loads, dumps
-from model.message import message
+from message import message
 
 class questions(object):
     def __init__ (self, client, teamId, opCode, mineId, resource, master, content, choices):

@@ -2,7 +2,6 @@ from random import randint
 from item import ITEM
 import csv
 
-
 class Castle:
     def __init__(self, id, question_id):
         self.id = id
@@ -33,11 +32,9 @@ class Castle:
     def attacked(self, team_id):
         if self.is_blocked:
             return False
-
         self.is_blocked = True
         self.block_time = 60 * 5
         self.team_attacking = team_id
-
         return True
 
     def change_owner(self, team_id):

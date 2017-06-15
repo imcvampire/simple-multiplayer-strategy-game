@@ -27,7 +27,7 @@ class controller:
         for i in self.questions:
             if i.id == question_id:
                 return i.get_question()
-        return None
+        return None, None
 
     def check_question_mine(self,mine_id, resource, team_id): #0x0201
         for i in self.fields:
@@ -118,18 +118,47 @@ class controller:
                 return weapon in i.inventory and weapon in ITEM['attack'].keys()
         return "not_found_team"
 
-    def attack_castle(self, team_id, castle_id, item_attack):
+    def attack_castle(self, team_id, castle_id):
         for team in self.teams:
             if team.id == team_id:
                 for castle in self.castles:
                     if castle.id == castle_id: 
                         castle.attacked(team_id)
-                        if castle.is_attack_success(item_attack):
-                            castle.change_owner(team_id)
-                            return True
-                        else:
+                        try:
+                            if castle.is_attack_success(team.inventory[0]):
+                                return True
+                            else:
+                                return False
+                        except:
                             return False
                 return "not_found_castle"
+        return "not_found_team"
+
+    def get_question_id_castle(self, castle_id):
+        for castle in self.castles:
+            if castle.id == castle_id: 
+                return castle.question_i_i       
         return "not_found_castle"
+
+        
+    def answer_castles_success(self, team_id, castle_id):
+        for team in self.teams:
+            if team.id == team_id:
+                for castle in self.castles:
+                    if castle.id == castle_id: 
+                        castle.owner_id = team_id
+                        castle.block_time = 60
+                        castle.is_blocked = True
+                        castle.change_question((castle.question_id+3)%37)
+                return "not_found_castle"
+        return "not_found_castle"
+
+
+    def get_team_resources(self):
+        team_resources = []
+        for i in self.teams:
+            team_resources.append((i.id, i.resources["gold"], i.resources["iron"], i.resources["wood"], i.resources["stone"]))        
+        return team_resources
+
 
 control = controller()

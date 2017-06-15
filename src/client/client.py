@@ -1,8 +1,8 @@
 import socket
 from tkinter import *
 from _pickle import loads, dumps
-from model.message import message
 from model.startFrame import startFrame
+from message import message
 
 host = "127.0.0.1"
 port = 5500

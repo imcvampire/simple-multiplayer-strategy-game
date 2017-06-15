@@ -20,7 +20,7 @@ class Question:
         return self.content, self.choices
 
     @staticmethod
-    def get_questions(file_name='questions.csv'):
+    def get_questions(file_name='/model/questions.csv'):
         questions = []
 
         with open(file_name) as csvfile:

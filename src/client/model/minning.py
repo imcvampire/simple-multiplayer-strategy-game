@@ -1,6 +1,6 @@
 from tkinter import *
 from _pickle import loads, dumps
-from model.message import message
+from message import message
 from tkinter import messagebox
 from model.questions import questions
 
@@ -13,9 +13,9 @@ class minning(object):
         self.mineId = mineId
         self.checked = StringVar()
         self.choices = [
-            "Iron",
-            "Wood",
-            "Stone"
+            "iron",
+            "wood",
+            "stone"
             ]
         Label(self.master, text="""Choose your resource:""",justify = LEFT,padx = 20).pack()
 

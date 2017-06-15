@@ -35,7 +35,6 @@ class Team:
         if item_name not in self.inventory:
             self.inventory.append(item_name)
             return True
-
         return False
 
     def is_enough(self, price):
@@ -55,14 +54,36 @@ class Team:
     def buy_item(self, type, item_name):
         if item_name not in ITEM[type].keys():
             return False
+
         price = ITEM[type][item_name]['resources']
+
         resource_types = price.keys()
+
         if not self.is_enough(price):
             return False
+
         for type, amount in price.items():
             self.reduce_resource(type, amount)
-        return self.add_item(item_name)
+        if type == 'attack':
+            try:      
+                self.inventory[0] = item_name
+                return True
+            except:
+                return "ERROR_append_item"
+        elif type == 'defence':
+            try:      
+                self.inventory[1] = item_name
+                return True
+            except:
+                return "ERROR_append_item"
+ 
+    def use_item(self, item_name):
+        if not item_name in self.inventory:
+            return False
 
+        self.inventory.remove(item_name)
+
+        return True
     def use_item(self, item_name):
         if not item_name in self.inventory:
             return False

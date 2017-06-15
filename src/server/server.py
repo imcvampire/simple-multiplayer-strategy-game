@@ -87,11 +87,27 @@ def process_mess(client, mes):
         if result == "blocked":
             messend = message(0x0502, False, "Castle is blocked!")
         elif result == "empty_castle":
-            
+            try:
+                quesId = control.get_questionid_castle(castleId)
+                payload = control.get_question_by_id(quesId)
+                messend = message(0x0502, True, payload)
+            except:
+                messend = message(0x0502, False, "Error! Please try again!")
         elif result == "our_castle":
             messend = message(0x0502, False, "Can not attack our castle!")
         elif result == "attack":
-            pass
+            try:
+                att = control.attack_castle(teamId, castleId)
+                if att == True:
+                    quesId = control.get_questionid_castle(castleId)
+                    payload = control.get_question_by_id(quesId)
+                    messend = message(0x0502, True, payload)
+                elif att == False:
+                    messend = message(0x0502, False, "Damage attack not enough!")
+                else:
+                    messend = message(0x0502, False, "Error! Please try again!")
+            except:
+                messend = message(0x0502, False, "Error! Please try again!")
         else:
             messend = message(0x0502, False, "Error! Please try again!")
         try:
@@ -120,10 +136,20 @@ def process_mess(client, mes):
     elif (mes.opCode == 0x0701):
         teamId = mes.teamId
         castleId, resource, answer = mes.payLoad
-        print ("Castle Id:", Id)
-        print ("Answer:", answer)
-        messend = message(0x0702, False, None)
-        client.send(dumps(messend))
+        try:
+            quesId = control.get_questionid_castle(castleId)
+            result = check_answer(answer, quesId)
+            if result == True:
+                control.answer_castles_success(teamId, castleId)
+                messend = message(0x0702, True, None)
+            else:
+                messend = message(0x0702, False, "Answer Incorrect!")
+        except:
+            messend = message(0x0402, False, "Error! Please try again!")
+        try:
+            client.send(dumps(messend))
+        except:
+            pass
     elif (mes.opCode == 0x0801):
         pass
     else:

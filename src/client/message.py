@@ -1,4 +1,3 @@
-
 class message(object):
     def __init__(self, opCode ,teamId, payLoad):
         self.opCode = opCode
