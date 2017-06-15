@@ -4,8 +4,10 @@ from _pickle import loads, dumps
 import sys, os
 from model.message import message
 from controller.controller import controller
+from model.scheduler import check_data
 
 control = controller()
+timer = check_data(control.teams, control.fields, control.castles, True)
 
 def process_mess(client, mes):
     if (mes.opCode == 0x0101): ## client join team ##
@@ -160,7 +162,7 @@ for i in range(3):
     list_team.append([i+1, 0, 0, 0, 0])
 
 def main():
-    try:        
+    try:
         host = sys.argv[1]
         port = int(sys.argv[2])
     except:
@@ -198,7 +200,7 @@ def main():
                     pass
                 elif event & select.EPOLLHUP:
                     epoll.unregister(fileno)
-                    connections[fileno].close() 
+                    connections[fileno].close()
                     del connections[fileno]
     finally:
         epoll.unregister(server.fileno())
