@@ -32,7 +32,7 @@ class questions(object):
                     if mesrcv.teamId == True:
                         messagebox.showinfo("Notify", "Answer correct!")
                     else:
-                        messagebox.showwarning("Notify", "Answer Incorrect!")
+                        messagebox.showwarning("Notify", mesrcv.payLoad)
                 else:
                     messagebox.showwarning("Warning", "Server send Error! Please try again!")
             except:

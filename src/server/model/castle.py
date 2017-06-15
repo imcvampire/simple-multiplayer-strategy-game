@@ -55,13 +55,9 @@ class Castle:
 
     @staticmethod
     def get_castles_from_file(file_name='castles.csv'):
-    def create_castle_list(n_questions, n_castles=3):
         castles = []
-
         with open(file_name) as csvfile:
             csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
-
             for index, row in enumerate(csvreader):
                 castles.append(Castle(row[0], randint(int(row[1]), int(row[2]))))
-
         return castles

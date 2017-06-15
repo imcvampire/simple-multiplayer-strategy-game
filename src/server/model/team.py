@@ -17,9 +17,7 @@ class Team:
     def add_member(self, member):
         if len(self.members) >= 4:
             return False
-
         self.members.append(member)
-
         return True
 
     def add_resource(self, type, amount):
@@ -57,17 +55,12 @@ class Team:
     def buy_item(self, type, item_name):
         if item_name not in ITEM[type].keys():
             return False
-
         price = ITEM[type][item_name]['resources']
-
         resource_types = price.keys()
-
         if not self.is_enough(price):
             return False
-
         for type, amount in price.items():
             self.reduce_resource(type, amount)
-
         return self.add_item(item_name)
 
     def use_item(self, item_name):
@@ -87,6 +80,6 @@ class Team:
             csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
 
             for index, row in enumerate(csvreader):
-                teams.append(Team(row[0], row[1]))
+                teams.append(Team(int(row[0]), row[1]))
 
         return teams

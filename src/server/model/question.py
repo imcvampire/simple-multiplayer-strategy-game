@@ -27,7 +27,7 @@ class Question:
             csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
 
             for index, row in enumerate(csvreader):
-                questions.append(Question(row[0],
+                questions.append(Question(int(row[0]),
                                           row[1],
                                           row[2],
                                           row[3],

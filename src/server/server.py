@@ -1,51 +1,125 @@
 import socket
 import select
-from model.message import message
 from _pickle import loads, dumps
-import sys
+import sys, os
+from model.message import message
+from controller.controller import controller
 
+control = controller()
 
 def process_mess(client, mes):
     if (mes.opCode == 0x0101): ## client join team ##
-        print (mes.teamId)
-        messend = message(0x0102, True, None)
-        client.send(dumps(messend))
+        teamId = mes.teamId
+        try:
+            result = control.join_team("player", teamId)
+        except:
+            result = "Error"
+        if result == True:
+            messend = message(0x0102, True, None)
+        elif result == "max_players":
+            messend = message(0x0102, False, "The team is max player!")
+        elif result == False:
+            messend = message(0x0102, False, "Team id is not exist!")
+        else:
+            messend = message(0x0102, False, "Error! Please try again!")
+        try:
+            client.send(dumps(messend))
+        except:
+            pass
     elif (mes.opCode == 0x0201): ## client want question of mine ##
-        Id, resource = mes.payLoad
-        print ("Mine Id:", Id)
-        print ("Resuorce:", resource)
-        content = "Cau Hoi ABCD"
-        choice = ["A", "B", "C", "D"]
-        payload = content, choice
-        messend = message(0x0202, True, payload)
-        client.send(dumps(messend))
+        mineId, resource = mes.payLoad
+        try:
+            content, choice = control.get_question_mine(mineId, resource)
+        except:
+            content, choice = None, None
+        if content == None:
+            messend = message(0x0202, False, "Error! Please try again!")
+        else:
+            payload = content, choice
+            messend = message(0x0202, True, payload)
+        try:
+            client.send(dumps(messend))
+        except:
+            pass
     elif (mes.opCode == 0x0301): ## client send answer of mine's question ##
-        Id, resource, answer = mes.payLoad
-        print ("Mine Id:", Id)
-        print ("Resuorce:", resource)
-        print ("Answer:", answer)
-        messend = message(0x0302, True, None)
-        client.send(dumps(messend))
+        teamId = mes.teamId
+        mineId, resource, answer = mes.payLoad
+        try:
+            result = control.check_answer_mine(mineId, resource, teamId, answer)
+        except:
+            result = "Error"
+        if result == "is_sloved":
+            messend = message(0x0302, False, "You sloved")
+        elif result == True:
+            messend = message(0x0302, True, None)
+        elif result == False:
+            messend = message(0x0302, False, "Answer Incorrect")
+        else:
+            messend = message(0x0302, False, "Error! Please try again!")
+        try:
+            client.send(dumps(messend))
+        except:
+            pass
     elif (mes.opCode == 0x0401): ## client buy attack ##
-        print ("Team Id:", mes.teamId)
-        print ("Attack:",mes.payLoad)
-        messend = message(0x0402, False, "Not enough resource!")
-        client.send(dumps(messend))
+        teamId = mes.teamId
+        itemname = mes.payLoad
+        try:
+            result = control.buy_item(teamId, itemname, "attack")
+        except:
+            result = "Error"
+        if result == True:
+            messend = message(0x0402, True, "Buy Complete!")
+        elif result == False:
+            messend = message(0x0402, False, "Cannot buy!")
+        else:
+            messend = message(0x0402, False, "Error! Please try again!")
+        try:
+            client.send(dumps(messend))
+        except:
+            pass
     elif (mes.opCode == 0x0501): ## client attack castle ##
-        print ("Team Id:", mes.teamId)
-        print ("Castle Id:", mes.payLoad)
-        payload = "Cau Hoi Lau Dai", ["A","B","C","D"]
-        messend = message(0x0502, True, payload)
-        client.send(dumps(messend))
+        teamId = mes.teamId
+        castleId = mes.payLoad
+        try:
+            result = control.check_castle(teamId, castleId)
+        except:
+            result = "Error!"
+        if result == "blocked":
+            messend = message(0x0502, False, "Castle is blocked!")
+        elif result == "empty_castle":
+            
+        elif result == "our_castle":
+            messend = message(0x0502, False, "Can not attack our castle!")
+        elif result == "attack":
+            pass
+        else:
+            messend = message(0x0502, False, "Error! Please try again!")
+        try:
+            client.send(dumps(messend))
+        except:
+            pass
     elif (mes.opCode == 0x0601): ## client buy defend ##
-        print ("Team Id:", mes.teamId)
-        castleId , name = mes.payLoad
-        print ("Castle Id:", castleId)
-        print ("Name of Defend:", name)
-        messend = message(0x0602, False, "Not enough resuorce")
-        client.send(dumps(messend))
+        teamId = mes.teamId
+        castleId , itemname = mes.payLoad
+        try:
+            result = control.set_defense(teamId, castleId, itemname)
+        except:
+            result = "Error"
+        if result == True:
+            messend = message(0x0402, True, "Buy Complete!")
+        elif result == "cant_set_defense":
+            messend = message(0x0402, False, "Cannot buy defend!")
+        elif result == False:
+            messend = message(0x0402, False, "Cannot set defend")
+        else:
+            messend = message(0x0402, False, "Error! Please try again!")
+        try:
+            client.send(dumps(messend))
+        except:
+            pass
     elif (mes.opCode == 0x0701):
-        Id, resource, answer = mes.payLoad
+        teamId = mes.teamId
+        castleId, resource, answer = mes.payLoad
         print ("Castle Id:", Id)
         print ("Answer:", answer)
         messend = message(0x0702, False, None)
@@ -71,9 +145,7 @@ def main():
     server.bind((host,port))
     server.listen(10)
     server.setblocking(0)
-
     epoll = select.epoll()
-
     epoll.register(server.fileno(), select.EPOLLIN)
     try:
         connections = {}
