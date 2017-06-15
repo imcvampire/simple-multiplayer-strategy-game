@@ -1,5 +1,7 @@
+from threading import Lock
 from item import ITEM
-import csv 
+import csv
+
 
 class Team:
     def __init__(self, id, name):
@@ -13,31 +15,50 @@ class Team:
             "wood": 0,
         }
         self.inventory = []
+        self.lock = Lock()
 
     def add_member(self, member):
+        """Add member to team
+        :param member: member's id
+        :return result(boolean)
+        """
         if len(self.members) >= 4:
             return False
         self.members.append(member)
         return True
 
-    def add_resource(self, type, amount):
-        self.resources[type] += amount
+    def add_resource(self, resource_type, amount):
+        """Add an amount of resource to team
+        :param resource_type: a kind of resource
+        :param amount: number of resource
+        """
+        with self.lock:
+            self.resources[resource_type] += amount
 
-    def reduce_resource(self, type, amount):
-        if self.resources[type] < amount:
-            return False
+    def __reduce_resource(self, resource_type, amount):
+        """Reduce an amount of resource
+        :notice:: Must use under a lock
+        """
+        if self.resources[resource_type] >= amount:
+            self.resources[resource_type] -= amount
 
-        self.resources[type] -= amount
+            return True
 
-        return True
+        return False
 
-    def add_item(self, item_name):
+    def __add_item(self, item_name):
+        """Add item to inventory
+        :notice:: Must use under a lock
+        """
         if item_name not in self.inventory:
             self.inventory.append(item_name)
             return True
         return False
 
-    def is_enough(self, price):
+    def __is_enough(self, price):
+        """Is enough resources to purchase
+        :notice:: Must use under a lock
+        """
         types = price.keys()
 
         is_enough = True
@@ -49,52 +70,64 @@ class Team:
         return is_enough
 
     def is_have(self, item_name):
+        """Is have an item"""
+        # Thread safe
         return item_name in self.inventory
 
-    def buy_item(self, type, item_name):
-        if item_name not in ITEM[type].keys():
+    def buy_item(self, item_type, item_name):
+        """Buy an item
+        :param item_type: Kind of item
+        :param item_name: Item's name
+        :return result(Boolean)
+        """
+        if item_name not in ITEM[item_type].keys():
             return False
 
-        price = ITEM[type][item_name]['resources']
+        price = ITEM[item_type][item_name]['resources']
 
         resource_types = price.keys()
 
-        if not self.is_enough(price):
-            return False
+        result = False
 
-        for type, amount in price.items():
-            self.reduce_resource(type, amount)
-        if type == 'attack':
-            try:      
-                self.inventory[0] = item_name
-                return True
-            except:
-                return "ERROR_append_item"
-        elif type == 'defence':
-            try:      
-                self.inventory[1] = item_name
-                return True
-            except:
-                return "ERROR_append_item"
- 
+        with self.lock:
+           for type, amount in price.items():
+               self.__reduce_resource(type, amount)
+           if type == 'attack':
+               try:      
+                   self.inventory[0] = item_name
+                   result = True
+               except:
+                   result = "ERROR_append_item"
+           elif type == 'defence':
+               try:      
+                   self.inventory[1] = item_name
+                   result =  True
+               except:
+                   result = "ERROR_append_item"
+                
+        return result
+      
     def use_item(self, item_name):
-        if not item_name in self.inventory:
-            return False
+        """Use a item
+        :param item_name: item's name
+        :return result
+        """
+        result = False
 
-        self.inventory.remove(item_name)
+        with self.lock:
+            if item_name in self.inventory:
+                self.inventory.remove(item_name)
 
-        return True
-    def use_item(self, item_name):
-        if not item_name in self.inventory:
-            return False
+                result = True
 
-        self.inventory.remove(item_name)
+        return result
 
-        return True
-
-    
     @staticmethod
     def get_teams_from_file(file_name='teams.csv'):
+        """Create team list from a CSV file
+        :param file_name: file name (Default value='teams.csv')
+        :return teams: a list of teams
+        """
         teams = []
 
         with open(file_name) as csvfile:
