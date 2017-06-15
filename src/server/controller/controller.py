@@ -11,14 +11,15 @@ from item import *
 
 class controller:
     def __init__(self, file_name_question='question.csv'):
-        self.questions = Question.get_questions(file_name_question)
+        self.questions = Question.get_questions()
         self.teams = Team.get_teams_from_file()
-        
         self.castles = Castle.get_castles_from_file()
         self.fields = Field.get_fields_from_file()
     def join_team(self, player, team_id):
         for i in self.teams:
+            print i.id
             if i.id == team_id:
+                print 1
                 if i.add_member(player):
                     return True
                 else:
@@ -83,7 +84,6 @@ class controller:
                     if self.buy_item(team_id, itemname,'defence') != True:
                         return "cant_set_defense"
 
-
                 for castle in self.castles:
                     if castle.id == castle_id:
                         if team.use_item(itemname):
@@ -95,9 +95,50 @@ class controller:
         return "not_found_team"
 
 
+    def check_castle(self, team_id, castle_id): #0x0501
+        for team in self.teams:
+            if team.id == team_id:
+                for castle in self.castles:
+                    if castle.id == castle_id:
+                        if castle.is_blocked:
+                            return "blocked"
+                        if castle.owner_id == None or castle.defence == 0:
+                            return "empty_castle"
+                        elif team_id == castle.owner_id:
+                            return "our_castle"
+                        else :
+                            return "attack"
+                return "not_found_castle"
+        return "not_found_team"
+
+    def check_weapon_attack(self, team_id, weapon):
+        for i in self.teams():
+            if i.id == team_id:
+                return weapon in i.inventory and weapon in ITEM['attack'].keys()
+        return "not_found_team"
+    def attack_castle(self, team_id, castle_id, item_attack):
+        for team in self.teams:
+            if team.id == team_id:
+                for castle in self.castles:
+                    if castle.id == castle_id: 
+                        castle.attacked(team_id)
+                        if castle.is_attack_success(item_attack):
+                            castle.defence = 0
+                            return True
+                        else:
+                            return False
+
+                return "not_found_castle"
+        return "not_found_castle"
+        
+        
+
+
 
 
 # q = controller()
-
-
-
+# print q.join_team("Khanh", 1)
+# print q.check_answer(2,3)
+# print q.questions[23].get_question()
+# print q.get_question_by_id(12)
+print ITEM['attack'].keys()
