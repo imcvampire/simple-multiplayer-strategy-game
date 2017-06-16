@@ -20,7 +20,7 @@ timer = check_data(control.teams, control.fields, control.castles, True)
 
 def setFinish():
     global is_finished
-    is_finished = False
+    is_finished = True
 
 timer_game = Timer(4 * 60 * 60.0, setFinish).start()
 
@@ -73,15 +73,15 @@ def sendData():
 
         if is_finished:
             # Send data to client
-            winner = sorted(control.teams, lambda team: (team.resources['gold'],
+            winner = sorted(control.teams, key=lambda team: (team.resources['gold'],
                                                          team.resources['iron'],
                                                          team.resources['stone'],
-                                                         team.resources['wood']))
+                                                         team.resources['wood']))[-1]
 
 
             print('Winner is {}'.format(winner.name))
 
-            quit()
+            exit()
 
         for client in list_client:
             try:
