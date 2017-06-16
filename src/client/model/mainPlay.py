@@ -129,7 +129,7 @@ class mainPlay(object):
         self.tableFrame = Frame(self.master)
         self.tableFrame.place(x = 20, y = 50)
         self.tableTeamInfo = table(self.tableFrame, 4, 5)
-        # self.update_defend([1,2,3])
+        ### Bigin thread update data
         thread = Thread(target = self.updateData,)
         thread.start()
     ## Main Loop ##
@@ -190,16 +190,22 @@ class mainPlay(object):
         buyDefendFrame = buyDefend(self.client, self.teamId, castleId, newFrame)
 
     def update_defend(self, list_defence):
+        """Update defend of castle
+        """
         self.castle1_defend['text'] = str(list_defence[0])
         self.castle2_defend['text'] = str(list_defence[1])
         self.castle3_defend['text'] = str(list_defence[2])
 
     def update_owner(self, list_owner):
+        """Update castle owner
+        """
         self.castle1_owner['text'] = str(list_owner[0])
         self.castle2_owner['text'] = str(list_owner[1])
         self.castle3_owner['text'] = str(list_owner[2])
 
     def updateData(self):
+        """Thread update Data
+        """
         host = "127.0.0.1"
         port = 8080
 
@@ -210,8 +216,8 @@ class mainPlay(object):
             mes = loads(clientUpdate.recv(2048))
             if mes.opCode == 0x0902:
                 list_team, list_defence, list_owner = mes.payLoad
-                self.tableTeamInfo.updateTable(list_team)
-                self.update_defend(list_defence)
-                self.update_owner(list_owner)
+                self.tableTeamInfo.updateTable(list_team) ### Update table team info
+                self.update_defend(list_defence) ###Update defence of castle
+                self.update_owner(list_owner) ###Update castle owner
             else:
                 pass
