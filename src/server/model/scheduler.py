@@ -2,6 +2,7 @@ from threading import Timer
 from model.resource import RESOURCES
 from model.interval import VALUE
 
+
 def check_data(teams, fields, castles, init=False):
     """Update data after 1 second
     :param teams: a list of team
@@ -35,5 +36,4 @@ def check_data(teams, fields, castles, init=False):
 
             castle.reduce_block()
 
-    # Send data to client
     return timer

@@ -13,13 +13,19 @@ class Question:
         self.answer = answer
 
     def check_answer(self, choice):
+        """Check answer is correct"""
         return choice == self.answer
 
     def get_question(self):
+        """Get question's content"""
         return self.content, self.choices
 
     @staticmethod
     def get_questions(file_name='questions.csv'):
+        """Get a list of questions from file
+        :param file_name: file name
+        :return questions: a list of questions
+        """
         questions = []
 
         with open(file_name) as csvfile:

@@ -19,47 +19,14 @@ timer = check_data(control.teams, control.fields, control.castles, True)
 
 
 def setFinish():
-	"""Remeaning time to finish
-	"""
+    """Set game is finished"""
     global is_finished
     is_finished = True
 
+
+"""Create timer for game time"""
 timer_game = Timer(4 * 60 * 60.0, setFinish).start()
 
-def multikeysort(items, columns):
-	"""Sort class team
-	"""
-    from operator import itemgetter
-    comparers = [((itemgetter(col[1:].strip()), -1) if col.startswith('-') else
-                  (itemgetter(col.strip()), 1)) for col in columns]
-    def comparer(left, right):
-        for fn, mult in comparers:
-            result = cmp(fn(left), fn(right))
-            if result:
-                return mult * result
-        else:
-            return 0
-    return sorted(items, cmp=comparer)
-
-def updateData(init=True):
-	"""Update Data in server
-	"""
-    global control
-
-    while init:
-        sleep(1)
-        for field in control.fields:
-            for resource in RESOURCES[:2]:
-                teams_have_resource = field.reduce_time(resource)
-
-                for solver in teams_have_resource:
-                    control.teams[solver-1].add_resource(resource, VALUE[resource])
-
-        for castle in control.castles:
-            resource = RESOURCES[3]
-            if castle.owner_id != None:
-                if castle.reduce_gold_delay():
-                    control.teams[castle.owner_id-1].add_resource(resource, VALUE[resource])
 
 serverData = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 serverData.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -72,15 +39,14 @@ def listen():
         list_client.append(connection)
 
 def sendData():
-	"""Send public Data to client
-	"""
+	"""Send public Data to client"""
     global is_finished
 
     while True:
         sleep(1)
 
         if is_finished:
-            # Send data to client
+            """Print winner's name and stop server"""
             winner = sorted(control.teams, key=lambda team: (team.resources['gold'],
                                                          team.resources['iron'],
                                                          team.resources['stone'],
@@ -92,6 +58,7 @@ def sendData():
             exit()
 
         for client in list_client:
+            """Send data to client"""
             try:
                 mes = message(0x0902, None, control.getData())
                 client.send(dumps(mes))
@@ -103,7 +70,7 @@ def process_mess(client, mes):
 	"""
     if (mes.opCode == 0x0101):
 	    """Message join tean
-	    """ 
+	    """
         teamId = mes.teamId
         try:
             result = control.join_team("player", teamId)

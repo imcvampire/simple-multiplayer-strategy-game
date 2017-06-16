@@ -1,3 +1,5 @@
+"""A dict of items"""
+
 ITEM = {
     'attack': {
         'balista': {
