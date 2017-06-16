@@ -28,6 +28,7 @@ class mainPlay(object):
         x = w/2 - size[0]/2
         y = h/2 - size[1]/2
         self.master.geometry("%dx%d+%d+%d" % (size + (x, y)))
+        self.id = Label(self.master, text= "Team: %s"%(self.teamId)).grid(row=0,column=0,sticky=W)
 
         ##### Mines #####
         self.mo1 = Frame(self.master)
@@ -77,9 +78,12 @@ class mainPlay(object):
         self.button_defend1 = Button(self.castle1, text='Buy_Defend', command=lambda: self.buy_defend(1), width = 10)
         self.button_defend1.grid(row=0, column=1, sticky=W, pady=4)
         self.label1_castl1 = Label(self.castle1, text = "Defend:", fg = 'blue').grid(row=1, column= 0, sticky = W)
-        self.castle1_defend = Label(self.castle1, text = "", relief=RIDGE, width = 13).grid(row=1, column= 1, sticky = NSEW)
+        self.castle1_defend = Label(self.castle1, text = "", relief=RIDGE, width = 13)
+        self.castle1_defend.grid(row=1, column= 1, sticky = NSEW)
         self.label2_castl1 = Label(self.castle1, text = "Team Owner:", fg = 'blue').grid(row=1, column= 2, sticky = W)
-        self.castle1_owner = Label(self.castle1, text = "", relief=RIDGE, width = 13).grid(row=1, column= 3, sticky = NSEW)
+        self.castle1_owner = Label(self.castle1, text = "", relief=RIDGE, width = 13)
+        self.castle1_owner.grid(row=1, column= 3, sticky = NSEW)
+
         #Castle 2
         self.castle2 = Frame(self.master)
         self.castle2.place(x= 250, y = 260)
@@ -89,9 +93,11 @@ class mainPlay(object):
         self.button_defend2 = Button(self.castle2, text='Buy_Defend', command=lambda: self.buy_defend(2), width = 10)
         self.button_defend2.grid(row=0, column=1, sticky=W, pady=4)
         self.label1_castl2 = Label(self.castle2, text = "Defend:", fg = 'blue').grid(row=1, column= 0, sticky = W)
-        self.castle2_defend = Label(self.castle2, text = "", relief=RIDGE, width = 13).grid(row=1, column= 1, sticky = NSEW)
+        self.castle2_defend = Label(self.castle2, text = "", relief=RIDGE, width = 13)
+        self.castle2_defend.grid(row=1, column= 1, sticky = NSEW)
         self.labe2_castl2 = Label(self.castle2, text = "Team Owner:", fg = 'blue').grid(row=1, column= 2, sticky = W)
-        self.castle2_owner = Label(self.castle2, text = "", relief=RIDGE, width = 13).grid(row=1, column= 3, sticky = NSEW)
+        self.castle2_owner = Label(self.castle2, text = "", relief=RIDGE, width = 13)
+        self.castle2_owner.grid(row=1, column= 3, sticky = NSEW)
         #Castle 3
         self.castle3 = Frame(self.master)
         self.castle3.place(x= 250, y = 320)
@@ -101,9 +107,11 @@ class mainPlay(object):
         self.button_defend3 = Button(self.castle3, text='Buy_Defend', command=lambda: self.buy_defend(3), width = 10)
         self.button_defend3.grid(row=0, column=1, sticky=W, pady=4)
         self.label1_castl3 = Label(self.castle3, text = "Defend:", fg = 'blue').grid(row=1, column= 0, sticky = W)
-        self.castle3_defend = Label(self.castle3, text = "", relief=RIDGE, width = 13).grid(row=1, column= 1, sticky = NSEW)
+        self.castle3_defend = Label(self.castle3, text = "", relief=RIDGE, width = 13)
+        self.castle3_defend.grid(row=1, column= 1, sticky = NSEW)
         self.labe2_castl3 = Label(self.castle3, text = "Team Owner:", fg = 'blue').grid(row=1, column= 2, sticky = W)
-        self.castle3_owner = Label(self.castle3, text = "", relief=RIDGE, width = 13).grid(row=1, column= 3, sticky = NSEW)
+        self.castle3_owner = Label(self.castle3, text = "", relief=RIDGE, width = 13)
+        self.castle3_owner.grid(row=1, column= 3, sticky = NSEW)
 
         ##### Buy attack #####
         self.frameBuyattack = Frame(self.master)
@@ -186,7 +194,7 @@ class mainPlay(object):
         self.castle2_defend['text'] = str(list_defence[1])
         self.castle3_defend['text'] = str(list_defence[2])
 
-    def update_owner(self, list_team):
+    def update_owner(self, list_owner):
         self.castle1_owner['text'] = str(list_owner[0])
         self.castle2_owner['text'] = str(list_owner[1])
         self.castle3_owner['text'] = str(list_owner[2])
@@ -203,7 +211,7 @@ class mainPlay(object):
             if mes.opCode == 0x0902:
                 list_team, list_defence, list_owner = mes.payLoad
                 self.tableTeamInfo.updateTable(list_team)
-                #self.update_defend(list_defence)
-                #self.update_owner(list_owner)
+                self.update_defend(list_defence)
+                self.update_owner(list_owner)
             else:
                 pass
