@@ -1,7 +1,6 @@
 from threading import Timer
-from resource import RESOURCES
-from interval import VALUE
-
+from model.resource import RESOURCES
+from model.interval import VALUE
 
 def check_data(teams, fields, castles, init=False):
     timer = Timer(1.0, check_data, [
@@ -13,6 +12,8 @@ def check_data(teams, fields, castles, init=False):
     timer.start()
 
     if not init:
+        print(1)
+
         for field in fields:
             for resource in RESOURCES[:2]:
                 teams_have_resource = field.reduce_time(resource)
@@ -22,11 +23,9 @@ def check_data(teams, fields, castles, init=False):
 
         for castle in castles:
             resource = RESOURCES[3]
-
-            if castle.reduce_gold_delay():
-                teams[castle.owner_id].add_resource(resource, VALUE[resource])
-
-
+            if castle.owner_id != None:
+                if castle.reduce_gold_delay():
+                    teams[castle.owner_id].add_resource(resource, VALUE[resource])
+                    
     # Send data to client
-
     return timer

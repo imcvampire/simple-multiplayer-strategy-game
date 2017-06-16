@@ -4,12 +4,14 @@ from _pickle import loads, dumps
 from model.startFrame import startFrame
 from message import message
 
+# connect server
 host = "127.0.0.1"
 port = 5500
 
+#### connect and creat Tk
 def main():
     root = Tk()
-    client = socket.socket()
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.settimeout(2.0)
     client.connect((host, port))
     mesrcv = loads(client.recv(2048))

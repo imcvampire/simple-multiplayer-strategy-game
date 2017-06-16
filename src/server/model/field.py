@@ -28,7 +28,6 @@ class Field:
 
     def add_solver(self, resource, team_id):
         result = False
-
         with self.lock:
             if not (team_id in self.resources[resource]['solvers']):
                 self.resources[resource]['solvers'].append({
@@ -41,8 +40,10 @@ class Field:
         return result
 
     def is_solved(self, resource, team_id):
-        return len(list(filter(lambda: x: x['team_id'] == team_id,
-                               self.resources[resource]['solvers']))) == 1
+        for x in self.resources[resource]['solvers']:
+            if team_id == x['team_id']:
+                return True
+        return False
 
     def get_solvers(self, resource):
         solvers = []
@@ -56,7 +57,7 @@ class Field:
         teams_have_resource = []
 
         with self.lock:
-            solvers = self.resources[resource]['sovlers']
+            solvers = self.resources[resource]['solvers']
 
             for solver in solvers:
                 solver['time'] -= 1
@@ -67,7 +68,7 @@ class Field:
         return teams_have_resource
 
     @staticmethod
-    def get_fields_from_file(file_name='fields.csv'):
+    def get_fields_from_file(file_name='model/fields.csv'):
         fields = [] 
         with open(file_name) as csvfile:
             csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')

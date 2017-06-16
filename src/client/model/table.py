@@ -38,4 +38,4 @@ class table(object):
     def updateTable(self, array):
         for i in range(1, self.row):
             for j in range(self.colum):
-                self.table[i][j]['text'] = str(array[i][j])
+                self.table[i][j]['text'] = str(array[i-1][j])

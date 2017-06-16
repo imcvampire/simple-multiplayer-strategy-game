@@ -9,10 +9,10 @@ class Team:
         self.name = name
         self.members = []
         self.resources = {
-            "gold": 0,
-            "iron": 0,
-            "stone": 0,
-            "wood": 0,
+            "gold": 100000,
+            "iron": 100000,
+            "stone": 100000,
+            "wood": 100000,
         }
         self.inventory = []
         self.lock = Lock()
@@ -73,7 +73,7 @@ class Team:
         """Is have an item"""
         # Thread safe
         return item_name in self.inventory
-
+   
     def buy_item(self, item_type, item_name):
         """Buy an item
         :param item_type: Kind of item
@@ -84,29 +84,20 @@ class Team:
             return False
 
         price = ITEM[item_type][item_name]['resources']
-
-        resource_types = price.keys()
-
+        if self.__is_enough(price) != True:
+            return 'not_enough'
         result = False
-
         with self.lock:
-           for type, amount in price.items():
-               self.__reduce_resource(type, amount)
-           if type == 'attack':
-               try:      
-                   self.inventory[0] = item_name
-                   result = True
-               except:
-                   result = "ERROR_append_item"
-           elif type == 'defence':
-               try:      
-                   self.inventory[1] = item_name
-                   result =  True
-               except:
-                   result = "ERROR_append_item"
-                
+            for type, amount in price.items():
+                self.__reduce_resource(type, amount)
+            if item_type == 'attack':
+                self.inventory = []
+                self.inventory.append(item_name)
+                result = True
+            elif item_type == 'defence':
+                result = True
         return result
-      
+
     def use_item(self, item_name):
         """Use a item
         :param item_name: item's name
@@ -123,7 +114,7 @@ class Team:
         return result
 
     @staticmethod
-    def get_teams_from_file(file_name='teams.csv'):
+    def get_teams_from_file(file_name='model/teams.csv'):
         """Create team list from a CSV file
         :param file_name: file name (Default value='teams.csv')
         :return teams: a list of teams

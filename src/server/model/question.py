@@ -1,6 +1,5 @@
 import csv
 
-
 class Question:
     def __init__(self, id, content, choice_1, choice_2, choice_3, choice_4, answer):
         self.id = id
@@ -20,7 +19,7 @@ class Question:
         return self.content, self.choices
 
     @staticmethod
-    def get_questions(file_name='/model/questions.csv'):
+    def get_questions(file_name='questions.csv'):
         questions = []
 
         with open(file_name) as csvfile:

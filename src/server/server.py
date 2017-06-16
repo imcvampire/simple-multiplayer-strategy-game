@@ -2,12 +2,53 @@ import socket
 import select
 from _pickle import loads, dumps
 import sys, os
-from model.message import message
+from message import message
 from controller.controller import controller
+from threading import Thread
+from model.resource import RESOURCES
+from model.interval import VALUE
+from time import sleep
 from model.scheduler import check_data
 
 control = controller()
 timer = check_data(control.teams, control.fields, control.castles, True)
+def updateData(init=True):
+    global control
+
+    while init:
+        sleep(1)
+        for field in control.fields:
+            for resource in RESOURCES[:2]:
+                teams_have_resource = field.reduce_time(resource)
+
+                for solver in teams_have_resource:
+                    control.teams[solver-1].add_resource(resource, VALUE[resource])
+
+        for castle in control.castles:
+            resource = RESOURCES[3]
+            if castle.owner_id != None:
+                if castle.reduce_gold_delay():
+                    control.teams[castle.owner_id-1].add_resource(resource, VALUE[resource])
+
+serverData = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+serverData.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+serverData.bind(("0.0.0.0",8080))
+serverData.listen(10)
+list_client = []
+def listen():
+    while True:
+        connection, address = serverData.accept()
+        list_client.append(connection)
+
+def sendData():
+    while True:
+        sleep(1)
+        for client in list_client:
+            try:
+                mes = message(0x0902, None, control.getData())
+                client.send(dumps(mes))
+            except:
+                list_client.remove(client)
 
 def process_mess(client, mes):
     if (mes.opCode == 0x0101): ## client join team ##
@@ -50,7 +91,7 @@ def process_mess(client, mes):
             result = control.check_answer_mine(mineId, resource, teamId, answer)
         except:
             result = "Error"
-        if result == "is_sloved":
+        if result == "is_solved":
             messend = message(0x0302, False, "You sloved")
         elif result == True:
             messend = message(0x0302, True, None)
@@ -66,13 +107,19 @@ def process_mess(client, mes):
         teamId = mes.teamId
         itemname = mes.payLoad
         try:
-            result = control.buy_item(teamId, itemname, "attack")
+            result = control.buy_attack(teamId, itemname)
         except:
             result = "Error"
         if result == True:
             messend = message(0x0402, True, "Buy Complete!")
+        elif result == "had_it":
+            messend = message(0x0402, False, "Sorry! You had it!")
+        elif result == 'you_had_best':
+            messend = message(0x0402, False, "Sorry! You had best attack!")
+        elif result == 'not_enough':
+            messend = message(0x0402, False, "Sorry! Not enough resources!")
         elif result == False:
-            messend = message(0x0402, False, "Cannot buy!")
+            messend = message(0x0402, False, "Can not buy! Please try again!")
         else:
             messend = message(0x0402, False, "Error! Please try again!")
         try:
@@ -83,12 +130,12 @@ def process_mess(client, mes):
         teamId = mes.teamId
         castleId = mes.payLoad
         try:
-            result = control.check_castle(teamId, castleId)
+            result = control.team_attack(teamId, castleId)
         except:
             result = "Error!"
         if result == "blocked":
             messend = message(0x0502, False, "Castle is blocked!")
-        elif result == "empty_castle":
+        elif result == "empty_castle" or result == True:
             try:
                 quesId = control.get_questionid_castle(castleId)
                 payload = control.get_question_by_id(quesId)
@@ -97,19 +144,8 @@ def process_mess(client, mes):
                 messend = message(0x0502, False, "Error! Please try again!")
         elif result == "our_castle":
             messend = message(0x0502, False, "Can not attack our castle!")
-        elif result == "attack":
-            try:
-                att = control.attack_castle(teamId, castleId)
-                if att == True:
-                    quesId = control.get_questionid_castle(castleId)
-                    payload = control.get_question_by_id(quesId)
-                    messend = message(0x0502, True, payload)
-                elif att == False:
-                    messend = message(0x0502, False, "Damage attack not enough!")
-                else:
-                    messend = message(0x0502, False, "Error! Please try again!")
-            except:
-                messend = message(0x0502, False, "Error! Please try again!")
+        elif result == False:
+            messend = message(0x0502, False, "Attack false!")
         else:
             messend = message(0x0502, False, "Error! Please try again!")
         try:
@@ -120,34 +156,42 @@ def process_mess(client, mes):
         teamId = mes.teamId
         castleId , itemname = mes.payLoad
         try:
-            result = control.set_defense(teamId, castleId, itemname)
+            result = control.buy_defense(teamId, castleId, itemname)
         except:
             result = "Error"
         if result == True:
-            messend = message(0x0402, True, "Buy Complete!")
-        elif result == "cant_set_defense":
-            messend = message(0x0402, False, "Cannot buy defend!")
+            messend = message(0x0602, True, "Buy Complete!")
+        elif result == "you_had_best":
+            messend = message(0x0602, False, "Sorry! You had the best defence!")
+        elif result == "not_owner":
+            messend = message(0x0602, False, "Sorry! You must owned castle!")
+        elif result == 'not_enough':
+            messend = message(0x0602, False, "Not enough resources")
         elif result == False:
-            messend = message(0x0402, False, "Cannot set defend")
+            messend = message(0x0602, False, "Sorry cannot buy! Please try again!")
         else:
-            messend = message(0x0402, False, "Error! Please try again!")
+            messend = message(0x0602, False, "Error! Please try again!")
         try:
             client.send(dumps(messend))
         except:
             pass
-    elif (mes.opCode == 0x0701):
+    elif (mes.opCode == 0x0701): ## client answer question of castle ##
         teamId = mes.teamId
         castleId, resource, answer = mes.payLoad
         try:
-            quesId = control.get_questionid_castle(castleId)
-            result = check_answer(answer, quesId)
-            if result == True:
+            result = control.check_answer_castle(castleId, answer)
+        except:
+            result = "Error"
+        if result == True:
+            try:
                 control.answer_castles_success(teamId, castleId)
                 messend = message(0x0702, True, None)
-            else:
-                messend = message(0x0702, False, "Answer Incorrect!")
-        except:
-            messend = message(0x0402, False, "Error! Please try again!")
+            except:
+                messend = message(0x0702, False, "Error! Please try again!")
+        elif result == False:
+            messend = message(0x0702, False, "Answer Incorrect!")
+        else:
+            messend = message(0x0702, False, "Error! Please try again!")
         try:
             client.send(dumps(messend))
         except:
@@ -157,17 +201,15 @@ def process_mess(client, mes):
     else:
         pass
 
-list_team = []
-for i in range(3):
-    list_team.append([i+1, 0, 0, 0, 0])
-
 def main():
-    try:
-        host = sys.argv[1]
-        port = int(sys.argv[2])
-    except:
-        print ("Error argv!")
-        exit()
+    host = "0.0.0.0"
+    port = 5500
+    # thread1 = Thread(target = updateData,)
+    # thread1.start()
+    thread2 = Thread(target = listen,)
+    thread2.start()
+    thread3 = Thread(target = sendData,)
+    thread3.start()
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind((host,port))
@@ -175,6 +217,7 @@ def main():
     server.setblocking(0)
     epoll = select.epoll()
     epoll.register(server.fileno(), select.EPOLLIN)
+    print ("Server started!")
     try:
         connections = {}
         while True:
@@ -186,7 +229,7 @@ def main():
                         connection.setblocking(0)
                         epoll.register(connection.fileno(), select.EPOLLIN)
                         connections[connection.fileno()] = connection
-                        connection.send(dumps(message(0x0802,None,list_team)))
+                        connection.send(dumps(message(0x0802,None,control.getData()[0])))
                     except:
                         pass
                 elif event & select.EPOLLIN:

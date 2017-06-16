@@ -1,5 +1,4 @@
 from threading import Lock
-from random import randint
 from item import ITEM
 import csv
 
@@ -27,29 +26,30 @@ class Castle:
 
         return result
 
-    def change_question(self, question_id):
-        self.question_id = question_id
+    def change_question(self):
+        self.question_id += 3
 
     def is_attack_success(self, item_name):
         result = None
 
         with self.lock:
-            if item_name not in list(ITEM['attack'].keys()):
+            if self.defence == 0:
+                result = True
+            elif item_name not in list(ITEM['attack'].keys()):
                 result = False
             else:
                 result = self.defence <= ITEM['attack'][item_name]['value']
-
         return result
 
     def attacked(self, team_id):
-        result = None
+        result = False
 
         with self.lock:
             if self.is_blocked:
                 result = False
             else:
                 self.is_blocked = True
-                self.block_time = 60 * 5
+                self.block_time = 10
                 self.team_attacking = team_id
 
                 result = True
@@ -83,10 +83,10 @@ class Castle:
         return True
 
     @staticmethod
-    def get_castles_from_file(file_name='castles.csv'):
+    def get_castles_from_file(file_name='model/castles.csv'):
         castles = []
         with open(file_name) as csvfile:
             csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
             for index, row in enumerate(csvreader):
-                castles.append(Castle(row[0], randint(int(row[1]), int(row[2]))))
+                castles.append(Castle(int(row[0]), int(row[1])))
         return castles

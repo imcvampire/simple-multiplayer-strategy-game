@@ -3,6 +3,8 @@ from _pickle import loads, dumps
 from message import message
 from model.mainPlay import mainPlay
 from tkinter import messagebox
+
+####  Gui join team, start!
 class startFrame():
 
     def __init__(self, client, master, list_team):
@@ -10,8 +12,17 @@ class startFrame():
         self.master = master
         self.list_team = list_team
         self.master.title("Small-Game")
+        ## in center and size
         self.master.geometry("430x170")
+        self.master.update_idletasks()
+        w = self.master.winfo_screenwidth()
+        h = self.master.winfo_screenheight()
+        size = tuple(int(_) for _ in self.master.geometry().split('+')[0].split('x'))
+        x = w/2 - size[0]/2
+        y = h/2 - size[1]/2
+        self.master.geometry("%dx%d+%d+%d" % (size + (x, y)))
         
+        # table , info team
         self.table_team = Frame(self.master)
         self.lable1 = Label(self.master, text = "Team Id:", relief= RIDGE, width = 10)
         self.teamId = Entry(self.master, width = 15)
@@ -26,9 +37,11 @@ class startFrame():
         self.btexit.place(x = 5, y = 130)
         self.updateTbteam()
 
+    # display
     def mainLoop(self):
         self.master.mainloop()
 
+    #update table when data of Team change
     def updateTbteam(self):
         l = Label(self.table_team, text="%10s" % ("Team Id"), relief=RIDGE, width = 10)
         l.grid(row=0, column=0, sticky=NSEW)
@@ -52,6 +65,7 @@ class startFrame():
             l = Label(self.table_team, text="%10s" % (team[4]), relief=RIDGE, width = 10)
             l.grid(row=i+1, column=4, sticky=NSEW)
 
+    # join team and start Play
     def playGame(self, teamId):
         try:
             teamId = int(teamId)
@@ -65,6 +79,7 @@ class startFrame():
                 if mesrcv.teamId == True:
                     newFrame = Toplevel()
                     self.hide()
+                    # call mainPlay and start play...
                     mainGame = mainPlay(self.client, teamId, newFrame, self.master)
                 else:
                     messagebox.showwarning("Warning", mesrcv.payLoad)
@@ -73,11 +88,13 @@ class startFrame():
         except:
             messagebox.showwarning("Warning", "Cannot connect to server!")
 
+    # close this Gui
     def quit(self):
         self.master.destroy()
 
+    # hide this Gui
     def hide(self):
         self.master.withdraw()
-
+    # close this Gui
     def Exit(self):
         self.quit()
