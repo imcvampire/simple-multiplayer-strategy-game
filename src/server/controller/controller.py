@@ -143,9 +143,12 @@ class controller:
             if team.id == team_id:
                 for castle in self.castles:
                     if castle.id == castle_id:
+                        print ('1: {}'.format(castle.is_blocked))
                         if castle.is_blocked:
                             return "blocked"
-                        if castle.owner_id == None:
+                        elif castle.owner_id == None:
+                            castle.set_block()
+                            print ('2: {}'.format(castle.is_blocked))
                             return "empty_castle"
                         elif team_id == castle.owner_id:
                             return "our_castle"
@@ -158,15 +161,16 @@ class controller:
         for team in self.teams:
             if team.id == team_id:
                 for castle in self.castles:
-                    if castle.id == castle_id and castle.attacked(team_id):
+                    if castle.id == castle_id:
+                        castle.set_block()
                         try:
                             itemattack = team.inventory[0]
                         except:
                             itemattack = None
                         try:
                             if castle.is_attack_success(itemattack):
-                                # castle.block_time += 60*5
-                                # castle.attacked(team_id)
+                                castle.block_time += 60*5
+                                castle.attacked(team_id)
                                 return True
                             else:
                                 castle.remove_block()
@@ -201,7 +205,15 @@ class controller:
 
     def check_answer_castle(self, castle_id, answer):
         quesId = self.get_questionid_castle(castle_id)
-        return self.check_answer(answer, quesId)
+        result = self.check_answer(answer, quesId)
+        if result == True:
+            return True
+        else:
+            for castle in self.castles:
+                if castle.id == castle_id:
+                    castle.remove_block()
+                    return result
+            return False
 
     def answer_castles_success(self, team_id, castle_id):
         for team in self.teams:

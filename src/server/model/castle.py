@@ -35,9 +35,10 @@ class Castle:
             self.is_blocked = False
 
     def set_block(self):
-        with self.block:
+        with self.lock:
             self.block_time = 5 * 60
             self.is_blocked = True
+        return True
 
     def is_attack_success(self, item_name):
         result = None
@@ -48,7 +49,10 @@ class Castle:
             elif item_name not in list(ITEM['attack'].keys()):
                 result = False
             else:
-                result = self.defence <= ITEM['attack'][item_name]['value']
+                try:
+                    result = self.defence <= ITEM['attack'][item_name]['value']
+                except:
+                    result = False
         return result
 
     def attacked(self, team_id):
@@ -59,8 +63,7 @@ class Castle:
                 result = False
             else:
                 self.is_blocked = True
-                 # self.block_time = 5 * 60
-                self.block_time = 30
+                self.block_time = 5 * 60
                 self.team_attacking = team_id
 
                 result = True
@@ -97,6 +100,7 @@ class Castle:
         with self.lock:
             if self.block_time > 0:
                 self.block_time -= 1
+            else:
                 self.is_blocked = False
 
     @staticmethod
