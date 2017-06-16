@@ -19,12 +19,16 @@ timer = check_data(control.teams, control.fields, control.castles, True)
 
 
 def setFinish():
+	"""Remeaning time to finish
+	"""
     global is_finished
     is_finished = True
 
 timer_game = Timer(4 * 60 * 60.0, setFinish).start()
 
 def multikeysort(items, columns):
+	"""Sort class team
+	"""
     from operator import itemgetter
     comparers = [((itemgetter(col[1:].strip()), -1) if col.startswith('-') else
                   (itemgetter(col.strip()), 1)) for col in columns]
@@ -38,6 +42,8 @@ def multikeysort(items, columns):
     return sorted(items, cmp=comparer)
 
 def updateData(init=True):
+	"""Update Data in server
+	"""
     global control
 
     while init:
@@ -66,6 +72,8 @@ def listen():
         list_client.append(connection)
 
 def sendData():
+	"""Send public Data to client
+	"""
     global is_finished
 
     while True:
@@ -91,7 +99,11 @@ def sendData():
                 list_client.remove(client)
 
 def process_mess(client, mes):
-    if (mes.opCode == 0x0101): ## client join team ##
+	"""Process message from client
+	"""
+    if (mes.opCode == 0x0101):
+	    """Message join tean
+	    """ 
         teamId = mes.teamId
         try:
             result = control.join_team("player", teamId)
@@ -109,7 +121,9 @@ def process_mess(client, mes):
             client.send(dumps(messend))
         except:
             pass
-    elif (mes.opCode == 0x0201): ## client want question of mine ##
+    elif (mes.opCode == 0x0201):
+    	"""Message get question of mine.
+    	"""
         mineId, resource = mes.payLoad
         try:
             content, choice = control.get_question_mine(mineId, resource)
@@ -124,7 +138,9 @@ def process_mess(client, mes):
             client.send(dumps(messend))
         except:
             pass
-    elif (mes.opCode == 0x0301): ## client send answer of mine's question ##
+    elif (mes.opCode == 0x0301):
+    	"""Client send answer of mine's question to server
+    	"""
         teamId = mes.teamId
         mineId, resource, answer = mes.payLoad
         try:
@@ -143,7 +159,9 @@ def process_mess(client, mes):
             client.send(dumps(messend))
         except:
             pass
-    elif (mes.opCode == 0x0401): ## client buy attack ##
+    elif (mes.opCode == 0x0401):
+    	"""Client buy attack item
+    	"""
         teamId = mes.teamId
         itemname = mes.payLoad
         try:
@@ -166,7 +184,9 @@ def process_mess(client, mes):
             client.send(dumps(messend))
         except:
             pass
-    elif (mes.opCode == 0x0501): ## client attack castle ##
+    elif (mes.opCode == 0x0501):
+    	"""Client want to attack castle
+    	"""
         teamId = mes.teamId
         castleId = mes.payLoad
         try:
@@ -192,7 +212,9 @@ def process_mess(client, mes):
             client.send(dumps(messend))
         except:
             pass
-    elif (mes.opCode == 0x0601): ## client buy defend ##
+    elif (mes.opCode == 0x0601):
+    	"""Client want to buy defence for castle
+    	"""
         teamId = mes.teamId
         castleId , itemname = mes.payLoad
         try:
@@ -215,7 +237,9 @@ def process_mess(client, mes):
             client.send(dumps(messend))
         except:
             pass
-    elif (mes.opCode == 0x0701): ## client answer question of castle ##
+    elif (mes.opCode == 0x0701):
+    	"""Client answer castle's question
+    	"""
         teamId = mes.teamId
         castleId, resource, answer = mes.payLoad
         try:
@@ -244,8 +268,6 @@ def process_mess(client, mes):
 def main():
     host = "0.0.0.0"
     port = 5500
-    # thread1 = Thread(target = updateData,)
-    # thread1.start()
     thread2 = Thread(target = listen,)
     thread2.start()
     thread3 = Thread(target = sendData,)
@@ -264,6 +286,8 @@ def main():
             events = epoll.poll(1)
             for fileno, event in events:
                 if fileno == server.fileno():
+                	"""Accept connection to server
+                	"""
                     try:
                         connection, address = server.accept()
                         connection.setblocking(0)
@@ -273,6 +297,8 @@ def main():
                     except:
                         pass
                 elif event & select.EPOLLIN:
+                	"""Receive message from client
+                	"""
                     try:
                         mes = loads(connections[fileno].recv(2048))
                         process_mess(connections[fileno], mes)

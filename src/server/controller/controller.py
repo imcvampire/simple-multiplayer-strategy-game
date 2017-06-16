@@ -18,6 +18,8 @@ class controller:
         self.fields = Field.get_fields_from_file()
 
     def join_team(self, player, team_id):
+        """Process when one play want to join team
+        """
         for i in self.teams:
             if i.id == team_id:
                 if i.add_member(player):
@@ -25,35 +27,47 @@ class controller:
                 else:
                     return "max_players"
         return False
-    def get_question_by_id(self, question_id): #0x0101
+    def get_question_by_id(self, question_id):
+        """Get question by id
+        """
         for i in self.questions:
             if i.id == question_id:
                 return i.get_question()
         return None, None
 
-    def check_question_mine(self,mine_id, resource, team_id): #0x0201
+    def check_question_mine(self,mine_id, resource, team_id):
+        """Check team is solved question of mine
+        """
         for i in self.fields:
             if i.id == mine_id:
                 return i.is_solved(resource, team_id)
 
-    def get_questionid_mine(self,mine_id, resource): #0x0201
+    def get_questionid_mine(self,mine_id, resource):
+        """Get question id of mine
+        """
         for i in self.fields:
             if i.id == mine_id:
                 return i.get_question_id(resource)
         return False
-    def check_answer(self, answer, question_id): #0x0301
+    def check_answer(self, answer, question_id):
+        """Check answer of question
+        """
         for i in self.questions:
             if i.id == question_id:
                 return i.check_answer(answer)
         return "Not_found_question"
 
-    def buy_item(self, team_id, itemname, type): #0x0401
+    def buy_item(self, team_id, itemname, type):
+        """Buy item attak or defence
+        """
         for team in self.teams:
             if team.id == team_id:
                 return team.buy_item(type, itemname)
         return "not_found_team"
 
     def check_item_attack_team(self, team_id, itemname):
+        """Check old attack item
+        """
         for team in self.teams:
             if team.id == team_id:
                 if len(team.inventory) == 0:
@@ -67,6 +81,8 @@ class controller:
                         return "you_had_best"
 
     def buy_attack(self, team_id, itemname):
+        """Buy attack for team
+        """
         for team in self.teams:
             if team.id == team_id:
                 result = self.check_item_attack_team(team_id, itemname)
@@ -76,6 +92,8 @@ class controller:
                     return self.buy_item(team_id, itemname, 'attack')
 
     def check_item_defence(self, castle_id, itemname):
+        """Check defence item
+        """
         for castle in self.castles:
             if castle.id == castle_id:
                 if castle.defence == 0:
@@ -85,7 +103,9 @@ class controller:
                         return True
                     else: return "you_had_best"
 
-    def buy_defense(self,team_id, castle_id, itemname): #0x0601
+    def buy_defense(self,team_id, castle_id, itemname):
+        """Buy defence for castle
+        """
         for castle in self.castles:
             if castle.id == castle_id:
                 if castle.owner_id == team_id:
@@ -117,14 +137,18 @@ class controller:
         return "not_found_team"
 
     def get_question_mine(self, mine_id, resource):
+        """Get question of mine
+        """
         Id = self.get_questionid_mine(mine_id, resource)
         if Id == False:
             return None, None
         else:
             return self.get_question_by_id(Id)
 
-    ### 0x0301 ###
+    
     def check_answer_mine(self, mine_id, resource, team_id, answer):
+        """Check answer of min's question
+        """
         if self.check_question_mine(mine_id, resource, team_id):
             return "is_solved"
         else:
@@ -138,7 +162,9 @@ class controller:
             else:
                 return False
 
-    def check_castle(self, team_id, castle_id): #0x0501
+    def check_castle(self, team_id, castle_id):
+        """Check castle is owner of team or empty or block
+        """
         for team in self.teams:
             if team.id == team_id:
                 for castle in self.castles:
@@ -158,6 +184,8 @@ class controller:
         return "not_found_team"
 
     def attack_castle(self, team_id, castle_id):
+        """begin attack castle
+        """
         for team in self.teams:
             if team.id == team_id:
                 for castle in self.castles:
@@ -183,6 +211,8 @@ class controller:
 
 
     def team_attack(self, team_id, castle_id):
+        """team attack castle
+        """
         result = self.check_castle(team_id, castle_id)
         if result != True:
             return result
@@ -198,12 +228,16 @@ class controller:
 
 
     def get_questionid_castle(self, castle_id):
+        """Get question id of castle
+        """
         for castle in self.castles:
             if castle.id == castle_id:
                 return castle.question_id
         return "not_found_castle"
 
     def check_answer_castle(self, castle_id, answer):
+        """Check answer of castle's question
+        """
         quesId = self.get_questionid_castle(castle_id)
         result = self.check_answer(answer, quesId)
         if result == True:
@@ -216,6 +250,8 @@ class controller:
             return False
 
     def answer_castles_success(self, team_id, castle_id):
+        """Using when one team answer success question of castle
+        """
         for team in self.teams:
             if team.id == team_id:
                 for castle in self.castles:
@@ -227,6 +263,8 @@ class controller:
 
 
     def getData(self):
+        """Get data send to client
+        """
         list_team = []
         for i in self.teams:
             list_team.append((i.id, i.resources["gold"], i.resources["iron"], i.resources["wood"], i.resources["stone"]))
@@ -246,4 +284,3 @@ class controller:
                 team.add_resource("wood", 10000)
 
 
-#control = controller()
