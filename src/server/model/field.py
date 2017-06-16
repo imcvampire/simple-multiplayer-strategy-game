@@ -24,9 +24,18 @@ class Field:
         self.lock = Lock()
 
     def get_question_id(self, resource):
+        """Return question's id
+        :param resource: a type of resource
+        :return question_id: this resource's question's id
+        """
         return self.resources[resource]['question']
 
     def add_solver(self, resource, team_id):
+        """Add a team to list of solver
+        :param resource: a type of resource
+        :param team_id: team's id
+        :return result
+        """
         result = False
 
         with self.lock:
@@ -41,10 +50,12 @@ class Field:
         return result
 
     def is_solved(self, resource, team_id):
+        """Check whether a team is solved a field's resource"""
         return len(list(filter(lambda x: x['team_id'] == team_id,
                                self.resources[resource]['solvers']))) == 1
 
     def get_solvers(self, resource):
+        """Return a list of solvers of one kind resource"""
         solvers = []
 
         with self.lock:
@@ -53,6 +64,7 @@ class Field:
         return solvers
 
     def reduce_time(self, resource):
+        """Reduce resource's timer"""
         teams_have_resource = []
 
         with self.lock:
