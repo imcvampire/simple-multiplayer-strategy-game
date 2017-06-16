@@ -9,9 +9,34 @@ from model.resource import RESOURCES
 from model.interval import VALUE
 from time import sleep
 from model.scheduler import check_data
+from threading import Timer
+
+is_finished = False
 
 control = controller()
+
 timer = check_data(control.teams, control.fields, control.castles, True)
+
+
+def setFinish():
+    global is_finished
+    is_finished = False
+
+timer_game = Timer(4 * 60 * 60.0, setFinish).start()
+
+def multikeysort(items, columns):
+    from operator import itemgetter
+    comparers = [((itemgetter(col[1:].strip()), -1) if col.startswith('-') else
+                  (itemgetter(col.strip()), 1)) for col in columns]
+    def comparer(left, right):
+        for fn, mult in comparers:
+            result = cmp(fn(left), fn(right))
+            if result:
+                return mult * result
+        else:
+            return 0
+    return sorted(items, cmp=comparer)
+
 def updateData(init=True):
     global control
 
@@ -41,8 +66,23 @@ def listen():
         list_client.append(connection)
 
 def sendData():
+    global is_finished
+
     while True:
         sleep(1)
+
+        if is_finished:
+            # Send data to client
+            winner = sorted(control.teams, lambda team: (team.resources['gold'],
+                                                         team.resources['iron'],
+                                                         team.resources['stone'],
+                                                         team.resources['wood']))
+
+
+            print('Winner is {}'.format(winner.name))
+
+            quit()
+
         for client in list_client:
             try:
                 mes = message(0x0902, None, control.getData())
