@@ -11,7 +11,7 @@ class Castle:
         self.team_attacking = None
         self.block_time = 0
         self.question_id = question_id
-        self.gold_delay = 0
+        self.gold_delay = 30
         self.lock = Lock()
 
     def change_def(self, item_name):
@@ -80,7 +80,7 @@ class Castle:
                 self.gold_delay = 30
                 is_have_resource = True
 
-        return True
+        return is_have_resource
 
     @staticmethod
     def get_castles_from_file(file_name='model/castles.csv'):

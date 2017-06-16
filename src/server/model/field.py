@@ -29,7 +29,9 @@ class Field:
     def add_solver(self, resource, team_id):
         result = False
         with self.lock:
-            if not (team_id in self.resources[resource]['solvers']):
+            is_have = len(list(filter(lambda team: team['team_id'] == team_id, self.resources[resource]['solvers']))) > 0
+
+            if not is_have:
                 self.resources[resource]['solvers'].append({
                     'team_id': team_id,
                     'time': 30,
@@ -74,7 +76,7 @@ class Field:
             csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
             for index, row in enumerate(csvreader):
                 fields.append(Field(int(row[0]),
-                                          int(row[1]),
-                                          int(row[2]),
-                                          int(row[3])))
+                                        int(row[1]),
+                                        int(row[2]),
+                                        int(row[3])))
         return fields

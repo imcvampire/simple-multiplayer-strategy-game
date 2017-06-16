@@ -132,7 +132,8 @@ class controller:
                 for i in self.fields:
                     if i.id == mine_id:
                         i.add_solver(resource, team_id)
-                return True
+                        return True
+                return False
             else:
                 return False
 
