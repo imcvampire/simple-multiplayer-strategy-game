@@ -13,11 +13,11 @@ def main():
     root = Tk()
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.settimeout(2.0)
-    client.connect((host, port))
+    client.connect((host, port)) ### Connect to server
     mesrcv = loads(client.recv(2048))
     if mesrcv.opCode == 0x0802:
-        list_team = mesrcv.payLoad
-        frame = startFrame(client, root, list_team)
+        list_team = mesrcv.payLoad ### Receive team info
+        frame = startFrame(client, root, list_team) ### Start Frame "Start Game"
         frame.mainLoop()
     else:
         pass
