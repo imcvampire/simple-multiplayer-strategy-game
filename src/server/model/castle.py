@@ -128,6 +128,10 @@ class Castle:
 
     @staticmethod
     def get_castles_from_file(file_name='model/castles.csv'):
+        """Get castle list from file
+        :param file_name: file name
+        :return castles: a list of castle
+        """
         castles = []
         with open(file_name) as csvfile:
             csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')

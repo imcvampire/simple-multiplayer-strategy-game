@@ -1,3 +1,5 @@
+"""List of resources"""
+
 RESOURCES = [
   'wood',
   'stone',

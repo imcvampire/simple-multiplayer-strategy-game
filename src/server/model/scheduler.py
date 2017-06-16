@@ -35,5 +35,4 @@ def check_data(teams, fields, castles, init=False):
 
             castle.reduce_block()
 
-    # Send data to client
     return timer
