@@ -29,6 +29,17 @@ class Castle:
     def change_question(self):
         self.question_id += 3
 
+    def remove_block(self):
+        with self.lock:
+            self.block_time = 0
+            self.is_blocked = False
+
+    def set_block(self):
+        with self.lock:
+            self.block_time = 5 * 60
+            self.is_blocked = True
+        return True
+
     def is_attack_success(self, item_name):
         result = None
 
@@ -38,7 +49,10 @@ class Castle:
             elif item_name not in list(ITEM['attack'].keys()):
                 result = False
             else:
-                result = self.defence <= ITEM['attack'][item_name]['value']
+                try:
+                    result = self.defence <= ITEM['attack'][item_name]['value']
+                except:
+                    result = False
         return result
 
     def attacked(self, team_id):
@@ -49,7 +63,7 @@ class Castle:
                 result = False
             else:
                 self.is_blocked = True
-                self.block_time = 10
+                self.block_time = 5 * 60
                 self.team_attacking = team_id
 
                 result = True
@@ -81,6 +95,13 @@ class Castle:
                 is_have_resource = True
 
         return is_have_resource
+
+    def reduce_block(self):
+        with self.lock:
+            if self.block_time > 0:
+                self.block_time -= 1
+            else:
+                self.is_blocked = False
 
     @staticmethod
     def get_castles_from_file(file_name='model/castles.csv'):
