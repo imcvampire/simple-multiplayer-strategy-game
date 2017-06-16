@@ -48,9 +48,9 @@ def sendData():
         if is_finished:
             """Print winner's name and stop server"""
             winner = sorted(control.teams, key=lambda team: (team.resources['gold'],
-                                                         team.resources['iron'],
-                                                         team.resources['stone'],
-                                                         team.resources['wood']))[-1]
+                                                             team.resources['iron'],
+                                                             team.resources['stone'],
+                                                             team.resources['wood']))[-1]
 
 
             print('Winner is {}'.format(winner.name))
