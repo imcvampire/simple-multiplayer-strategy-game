@@ -2,6 +2,7 @@ import os, sys
 # import path
 
 sys.path.append(os.path.abspath('model'))
+sys.path.append(os.path.abspath('../model'))
 
 from question import *
 from field import *
@@ -12,7 +13,7 @@ from item import *
 class controller:
     def __init__(self, file_name_question='controller/question.csv'):
         self.questions = Question.get_questions(file_name_question)
-        self.teams = Team.get_teams_from_file()        
+        self.teams = Team.get_teams_from_file()
         self.castles = Castle.get_castles_from_file()
         self.fields = Field.get_fields_from_file()
 
@@ -164,9 +165,11 @@ class controller:
                             itemattack = None
                         try:
                             if castle.is_attack_success(itemattack):
-                                castle.block_time += 60*5
+                                # castle.block_time += 60*5
+                                # castle.attacked(team_id)
                                 return True
                             else:
+                                castle.remove_block()
                                 team.inventory = []
                                 return False
                         except:
@@ -192,8 +195,8 @@ class controller:
 
     def get_questionid_castle(self, castle_id):
         for castle in self.castles:
-            if castle.id == castle_id: 
-                return castle.question_id       
+            if castle.id == castle_id:
+                return castle.question_id
         return "not_found_castle"
 
     def check_answer_castle(self, castle_id, answer):
@@ -204,7 +207,7 @@ class controller:
         for team in self.teams:
             if team.id == team_id:
                 for castle in self.castles:
-                    if castle.id == castle_id: 
+                    if castle.id == castle_id:
                         castle.change_owner(team_id)
                         castle.change_question()
                 return "not_found_castle"
@@ -214,7 +217,7 @@ class controller:
     def getData(self):
         list_team = []
         for i in self.teams:
-            list_team.append((i.id, i.resources["gold"], i.resources["iron"], i.resources["wood"], i.resources["stone"]))        
+            list_team.append((i.id, i.resources["gold"], i.resources["iron"], i.resources["wood"], i.resources["stone"]))
         list_defend = []
         list_owner = []
         for castle in self.castles:
