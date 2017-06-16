@@ -73,7 +73,7 @@ class Team:
         """Is have an item"""
         # Thread safe
         return item_name in self.inventory
-   
+
     def buy_item(self, item_type, item_name):
         """Buy an item
         :param item_type: Kind of item
@@ -84,7 +84,7 @@ class Team:
             return False
 
         price = ITEM[item_type][item_name]['resources']
-        if self.__is_enough(price) != True:
+        if self.__is_enough(price) is not True:
             return 'not_enough'
         result = False
         with self.lock:

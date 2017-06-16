@@ -1,5 +1,4 @@
 from threading import Lock
-from random import randint
 import csv
 
 class Field:
@@ -67,6 +66,10 @@ class Field:
         return solvers
 
     def reduce_time(self, resource):
+        """Reduce time counter and return list of teams will have resource
+        :param resource: a kind of resource
+        :return teams_have_resource: a list of teams will have new resource
+        """
         teams_have_resource = []
 
         with self.lock:
@@ -82,12 +85,16 @@ class Field:
 
     @staticmethod
     def get_fields_from_file(file_name='model/fields.csv'):
+        """Get a list of fields from file
+        :param file_name: file name
+        :return fields: a list of fields
+        """
         fields = []
         with open(file_name) as csvfile:
             csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
             for index, row in enumerate(csvreader):
                 fields.append(Field(int(row[0]),
-                                        int(row[1]),
-                                        int(row[2]),
-                                        int(row[3])))
+                                    int(row[1]),
+                                    int(row[2]),
+                                    int(row[3])))
         return fields
